@@ -1,0 +1,17 @@
+/* 
+    Document   : index
+    Created on : 2013-1-13, 10:05:25
+    Author     : mxq
+    Description:
+        首页CSS文件
+*/
+#login{
+    
+}
+#logo{
+    background-image: url(images/logo.png);
+    background-repeat: no-repeat;
+    width: 406px;
+    height: 63px;
+    position: absolute;
+}

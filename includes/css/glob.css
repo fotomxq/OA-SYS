@@ -1,0 +1,44 @@
+/* 
+    Document   : glob
+    Created on : 2013-1-13, 10:05:46
+    Author     : mxq
+    Description:
+        全局CSS文件
+*/
+
+root { 
+    display: block;
+}
+
+body{
+    font-family: 微软雅黑,宋体;
+    color: #000000;
+    text-decoration: none;
+    height:100%; 
+    overflow:hidden; 
+    margin:0px; 
+    padding:0px;
+    font-size: 14px;
+}
+
+a{
+    font-family: 微软雅黑,黑体,宋体;
+    font-size: 14px;
+    text-decoration: none;
+    color: #000000;
+}
+a:hover{
+    color:red;
+}
+
+img{
+    border: none;
+}
+
+#frame{
+    background-color: #ccccff;
+    background-repeat: repeat;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+}
