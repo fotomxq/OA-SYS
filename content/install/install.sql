@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- 主机: localhost
--- 生成日期: 2013 年 03 月 09 日 08:43
+-- 生成日期: 2013 年 03 月 11 日 07:27
 -- 服务器版本: 5.1.44
 -- PHP 版本: 5.3.1
 
@@ -61,14 +61,39 @@ CREATE TABLE IF NOT EXISTS `oa_configs` (
   `config_value` text COLLATE utf8_bin NOT NULL,
   `config_default` text COLLATE utf8_bin NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=2 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=3 ;
 
 --
 -- 转存表中的数据 `oa_configs`
 --
 
 INSERT INTO `oa_configs` (`id`, `config_name`, `config_value`, `config_default`) VALUES
-(1, 'WEB_TITLE', 'OA办公系统', 'OA办公系统');
+(1, 'WEB_TITLE', 'OA办公系统', 'OA办公系统'),
+(2, 'USER_TIMEOUT', '900', '900');
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `oa_posts`
+--
+
+CREATE TABLE IF NOT EXISTS `oa_posts` (
+  `id` bigint(20) NOT NULL COMMENT '主键',
+  `post_title` varchar(300) COLLATE utf8_bin DEFAULT NULL COMMENT '标题',
+  `post_content` longtext COLLATE utf8_bin COMMENT '内容',
+  `post_date` datetime NOT NULL COMMENT '创建时间',
+  `post_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '修改时间',
+  `post_ip` bigint(20) NOT NULL COMMENT 'IP ID',
+  `post_type` varchar(300) COLLATE utf8_bin NOT NULL COMMENT '内容类型标识',
+  `post_order` int(11) NOT NULL DEFAULT '0' COMMENT '排序',
+  `post_parent` bigint(20) NOT NULL COMMENT '上一级ID',
+  `post_user` bigint(20) DEFAULT NULL COMMENT '用户ID',
+  `post_password` char(41) COLLATE utf8_bin NOT NULL COMMENT '访问密码',
+  `post_name` varchar(300) COLLATE utf8_bin DEFAULT NULL COMMENT '媒体文件名称',
+  `post_url` varchar(500) COLLATE utf8_bin DEFAULT NULL COMMENT '多媒体文件路径',
+  `post_status` varchar(30) COLLATE utf8_bin NOT NULL DEFAULT 'public' COMMENT '发布状态',
+  `post_meta` varchar(300) COLLATE utf8_bin DEFAULT NULL COMMENT '头信息'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- --------------------------------------------------------
 
@@ -88,7 +113,7 @@ CREATE TABLE IF NOT EXISTS `oa_user` (
   `user_login_date` datetime NOT NULL COMMENT '上一次登录时间',
   `user_login_ip` bigint(20) NOT NULL COMMENT '上一次登录IP ID',
   `user_login_session` char(32) COLLATE utf8_bin NOT NULL COMMENT '登录会话值',
-  `user_status` tinyint(1) NOT NULL COMMENT '状态',
+  `user_status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '状态',
   `user_remember` tinyint(1) NOT NULL DEFAULT '0' COMMENT '记住我',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1 ;
@@ -103,6 +128,6 @@ CREATE TABLE IF NOT EXISTS `oa_user_group` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
   `group_name` varchar(30) COLLATE utf8_bin NOT NULL COMMENT '名称',
   `group_power` text COLLATE utf8_bin NOT NULL COMMENT '权限',
-  `group_status` tinyint(1) NOT NULL COMMENT '状态',
+  `group_status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '状态',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1 ;
