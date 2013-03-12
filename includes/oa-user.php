@@ -3,7 +3,7 @@
 /**
  * 用户操作类
  * @author fotomxq <fotomxq.me>
- * @version 4
+ * @version 5
  * @package oa
  */
 class oauser {
@@ -93,21 +93,134 @@ class oauser {
         $this->table_name_group = $db->tables[3];
     }
 
-    public function view_user_list() {
-        
+    /**
+     * 获取用户列表
+     * @since 5
+     * @param int $group 用户组ID|null
+     * @param int $page 页数
+     * @param int $max 页长
+     * @param int $order 排序字段数组键值
+     * @param boolean $desc 是否倒序
+     * @return array|boolean
+     */
+    public function view_user_list($group = null, $page = 1, $max = 10, $order = 0, $desc = false) {
+        $return = false;
+        $fields = array('id', 'user_username', 'user_password', 'user_email', 'user_name', 'user_group', 'user_create_date', 'user_create_ip', 'user_login_date', 'user_login_ip', 'user_login_status');
+        if (isset($fields[$order]) == true) {
+            $where = '';
+            if ($group == null) {
+                $where = '1';
+            } else {
+                $where = '`user_group` = :group';
+            }
+            $desc = $desc ? 'DESC' : 'ASC';
+            $sql = 'SELECT `id`,`user_username`,`user_password`,`user_email`,`user_name`,`user_group`,`user_create_date`,`user_create_ip`,`user_login_date`,`user_login_ip`,`user_status` FROM `' . $this->table_name_user . '` WHERE ' . $where . ' ORDER BY ' . $fields[$order] . ' ' . $desc . ' LIMIT ' . ($page - 1) * $max . ',' . $max;
+            $sth = $this->db->prepare($sql);
+            if ($group != null) {
+                $sth->bindParam(':group', $group);
+            }
+            if ($sth->execute() = true) {
+                $return = $sth->fetchAll(PDO::FETCH_ASSOC);
+            }
+        }
+        return $return;
     }
 
-    public function view_group_list() {
-        
+    /**
+     * 获取用户列表记录数
+     * @since 5
+     * @param int $group 用户组ID
+     * @return int
+     */
+    public function get_user_row($group = null) {
+        $return = 0;
+        $where = '';
+        if ($group == null) {
+            $where = '1';
+        } else {
+            $where = '`user_group` = :group';
+        }
+        $sql = 'SELECT COUNT(id) FROM `' . $this->table_name_user . '` WHERE ' . $where;
+        $sth = $this->db->prepare($sql);
+        if ($group != null) {
+            $sth->bindParam(':group', $group, PDO::PARAM_INT | PDO::PARAM_INPUT_OUTPUT);
+        }
+        if ($sth->execute() == true) {
+            $return = $sth->fetchColumn();
+        }
+        return $return;
     }
 
+    /**
+     * 获取用户组列表
+     * @since 5
+     * @param int $page 页数
+     * @param int $max 页长
+     * @param int $order 排序字段数组键值
+     * @param boolean $desc 是否倒序
+     * @return array|boolean
+     */
+    public function view_group_list($page = 1, $max = 10, $order = 0, $desc = false) {
+        $return = false;
+        $fields = array('id', 'group_name', 'group_power', 'group_status');
+        if (isset($fields[$order]) == true) {
+            $desc = $desc ? 'DESC' : 'ASC';
+            $sql = 'SELECT `id`,`group_name`,`group_power`,`group_status` FROM `' . $this->table_name_group . '` ORDER BY ' . $fields[$order] . ' ' . $desc . ' LIMIT ' . ($page - 1) * $max . ',' . $max;
+            $sth = $this->db->prepare($sql);
+            if ($sth->execute() == true) {
+                $return = $sth->fetchAll(PDO::FETCH_ASSOC);
+            }
+        }
+        return $return;
+    }
+
+    /**
+     * 获取用户组记录数
+     * @since 5
+     * @return int
+     */
+    public function get_group_row() {
+        $return = 0;
+        $sql = 'SELECT COUNT(id) FROM `' . $this->table_name_group . '`';
+        $sth = $this->db->prepare($sql);
+        if ($sth->execute() == true) {
+            $return = $sth->fetchColumn();
+        }
+        return $return;
+    }
+
+    /**
+     * 获取用户信息
+     * @since 5
+     * @param int $id 用户ID
+     * @return array|boolean
+     */
     public function view_user($id) {
-        $sql_user = 'SELECT `user_username`,`user_password`,`user_email`,`user_name`,`user_group`,`user_create_date`,`user_create_ip`,`user_login_date`,`user_login_ip`,`user_status` FROM `' . $this->table_name_user . '` WHERE `id`=?';
-        $sth = $this->db->prepare($sql_user);
+        $return = false;
+        $sql = 'SELECT `id`,`user_username`,`user_password`,`user_email`,`user_name`,`user_group`,`user_create_date`,`user_create_ip`,`user_login_date`,`user_login_ip`,`user_status` FROM `' . $this->table_name_user . '` WHERE `id`=:id';
+        $sth = $this->db->prepare($sql);
+        $sth->bindParam(':id', $id, PDO::PARAM_INT | PDO::PARAM_INPUT_OUTPUT);
+        if ($sth->execute() == true) {
+            $return = $sth->fetch(PDO::FETCH_ASSOC);
+        }
+        return $return;
     }
 
+    /**
+     * 获取用户组信息
+     * @since 5
+     * @param int $id 用户组ID
+     * @return array|boolean
+     */
     public function view_group($id) {
-        $sql_group = 'SELECT `user_username`,`user_password`,`user_email`,`user_name`,`user_group`,`user_create_date`,`user_create_ip`,`user_login_date`,`user_login_ip`,`user_status` FROM `' . $this->table_name_user . '` WHERE `id`=?';
+        $return = false;
+        $sql = 'SELECT `id`,`group_name`,`group_power`,`group_status` FROM `' . $this->table_name_group . '` WHERE `id` = :id';
+        $sth = $this->db->prepare($sql);
+        $sth->bindParam(':id', $id, PDO::PARAM_INT | PDO::PARAM_INPUT_OUTPUT);
+        if ($sth->execute() == true) {
+            $return = $sth->fetch(PDO::FETCH_ASSOC);
+        }
+        return $return;
     }
 
     /**
@@ -196,28 +309,155 @@ class oauser {
         return true;
     }
 
+    /**
+     * 添加一个新用户
+     * @since 5
+     * @param string $username 用户名
+     * @param string $password 密码明文
+     * @param string $email 邮箱
+     * @param string $name 名字
+     * @param int $group 用户组ID
+     * @param int $ip_id IP ID
+     * @return boolean|int
+     */
     public function add_user($username, $password, $email, $name, $group, $ip_id) {
-        
+        $return = false;
+        if ($this->check_username($username) == true && $this->check_password($password) == true && $this->check_email($email) == true && $this->check_name($name) == true && $this->check_int($group) == true) {
+            //判断用户组是否存在
+            $group_view = $this->view_group($group);
+            if ($group_view == false) {
+                return $return;
+            }
+            //判断用户名是否存在
+            $sql_select = 'SELECT `id` FROM `' . $this->table_name_user . '` WHERE `user_username` = :username';
+            $sth_select = $this->db->prepare($sql_select);
+            $sth_select->bindParam(':username', $username, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
+            if ($sth_select->execute() != true) {
+                return $return;
+            }
+            $res_select = $sth_select->fetchColumn();
+            if ($res_select) {
+                return $return;
+            }
+            //插入新的记录
+            $sql = 'INSERT INTO `' . $this->table_name_user . '`(`user_username`,`user_password`,`user_email`,`user_name`,`user_group`,`user_create_date`,`user_create_ip`,`user_login_date`,`user_login_ip`,`user_login_session`) VALUES(:username,:password,:email,:name,:group,NOW(),:ip,NOW(),:ip,:session)';
+            $sth = $this->db->prepare($sql);
+            $sth->bindParam(':username', $username, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
+            $password = sha1($password);
+            $sth->bindParam(':password', $password, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
+            $sth->bindParam(':email', $email, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
+            $sth->bindParam(':name', $name, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
+            $sth->bindParam(':group', $group_view['id']);
+            $sth->bindParam(':ip', $ip_id, PDO::PARAM_INT);
+            $session = md5('0');
+            $sth->bindParam(':session', $session);
+            if($sth->execute() == true){
+                $return = $this->db->lastInsertId();
+            }
+        }
+        return $return;
     }
 
-    public function add_group() {
-        
+    /**
+     * 添加新的用户组
+     * @since 5
+     * @param string $name 用户组名称
+     * @param string $power 权限
+     * @return boolean|int
+     */
+    public function add_group($name, $power) {
+        $return = false;
+        if($this->check_name($name) == true && $this->check_is_power($power) == true){
+            $sql_select = 'SELECT `id` FROM `'.$this->table_name_group.'` WHERE `group_name` = :name';
+            $sth_select = $this->db->prepare($sql_select);
+            $sth_select->bindParam(':name', $name,PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
+            if($sth_select->execute() == true){
+                $res_select = $sth_select->fetchColumn();
+                if($res_select){
+                    return $return;
+                }
+                $sql = 'INSERT INTO `'.$this->table_name_group.'`(`group_name`,`group_power`,`group_status`) VALUES(:name,:power,\'1\')';
+                $sth = $this->db->prepare($sql);
+                $sth->bindParam(':name', $name,PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
+                $sth->bindParam(':power', $power,PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
+                if($sth->execute() == true){
+                    $return = $this->db->lastInsertId();
+                }
+            }
+        }
+        return $return;
     }
 
-    public function edit_user() {
+    public function edit_user($id,$username,$password,$email,$name,$group) {
+        $return = false;
+        $sql = 'UPDATE `'.$this->table_name_user.'` SET `user_username` = :username,`user_password` = :password,`user_email` = :email,`user_name` = :name,`user_group` = :group WHERE `id` = :id';
         
+        return $return;
     }
 
-    public function edit_group() {
-        
+    /**
+     * 编辑用户组
+     * @since 5
+     * @param int $id 用户组ID
+     * @param string $name 用户组名称
+     * @param string $power 权限
+     * @param boolean $status 启用状态
+     * @return boolean
+     */
+    public function edit_group($id,$name,$power,$status) {
+        $return = false;
+        if($this->check_name($name) == true && $this->check_is_power($power) == true){
+            $sql = 'UPDATE `'.$this->table_name_group.'` SET `group_name` = :name,`group_power` = :power,`group_status` = :status WHERE `id` = :id';
+            $sth = $this->db->prepare($sql);
+            $sth->bindParam(':id', $id,PDO::PARAM_INT | PDO::PARAM_INPUT_OUTPUT);
+            $sth->bindParam(':name', $name,PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
+            $sth->bindParam(':power', $power,PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
+            $status = $status ? 1:0;
+            $sth->bindParam(':status', $status,PDO::PARAM_INT);
+            if($sth->execute() == true){
+                $return = true;
+            }
+        }
+        return $return;
     }
 
-    public function del_user() {
-        
+    /**
+     * 删除用户
+     * @since 5
+     * @param int $id 用户ID
+     * @return boolean
+     */
+    public function del_user($id) {
+        if($this->check_int($id) == false){
+            return false;
+        }
+        $sql = 'DELETE FROM `'.$this->table_name_user.'` WHERE `id` = :id';
+        $sth = $this->db->prepare($sql);
+        $sth->bindParam(':id', $id,PDO::PARAM_INT | PDO::PARAM_INPUT_OUTPUT);
+        return $sth->execute();
     }
 
-    public function del_group() {
-        $sql = '';
+    /**
+     * 删除用户组
+     * <p>注意，用户组下的所有用户将一并删除！</p>
+     * @since 5
+     * @param int $id 用户组ID
+     * @return boolean
+     */
+    public function del_group($id) {
+        if($this->check_int($id) == false){
+            return false;
+        }
+        $sql_user = 'DELETE FROM `'.$this->table_name_user.'` WHERE `user_group` = :id';
+        $sth_user = $this->db->prepare($sql_user);
+        $sth_user->bindParam(':id', $id,PDO::PARAM_INT | PDO::PARAM_INPUT_OUTPUT);
+        if($sth_user->execute() != true){
+            return false;
+        }
+        $sql_group = 'DELETE FROM `'.$this->table_name_group.'` WHERE `id` = :id';
+        $sth_group = $this->db->prepare($sql_group);
+        $sth_group->bindParam(':id', $id,PDO::PARAM_INT | PDO::PARAM_INPUT_OUTPUT);
+        return $sth_group->execute();
     }
 
     /**
