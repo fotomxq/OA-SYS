@@ -5,7 +5,7 @@
  * 
  * @author fotomxq <fotomxq.me>
  * @package core
- * @version 3
+ * @version 4
  */
 class coredb extends PDO {
 
@@ -57,6 +57,27 @@ class coredb extends PDO {
      * @since 1 
      */
     public $status;
+    
+    /**
+     * 表数组
+     * @var array
+     * @since 4 
+     */
+    public $tables = array(
+        'ip'=>'core_ip',
+        'log'=>'core_log',
+        'configs'=>'oa_configs',
+        'posts'=>'oa_posts',
+        'user'=>'oa_user',
+        'ugroup'=>'oa_user_group');
+    
+    public $fields = array(
+        'ip'=>array('id','ip_addr','ip_ban'),
+        'log'=>array('id','log_date','log_ip','log_message'),
+        'configs'=>array('id','config_name','config_value','config_default'),
+        'posts'=>array('id','post_title','post_content','post_date','post_modified','post_ip','post_type','post_order','post_parent','post_user','post_password','post_name','post_url','post_status','post_meta'),
+        'user'=>array('id','user_username','user_password','user_email','user_name',''),
+        'ugroup'=>array());
 
     /**
      * 初始化
@@ -114,6 +135,92 @@ class coredb extends PDO {
      */
     public function is_link() {
         return $this->status;
+    }
+    
+    public function select($tables,$fields,$where,$page=1,$max=10,$order=0,$desc=false){
+        //合成表部分
+        if(is_array($tables) == true){
+            $tables = implode(',', $tables);
+        }else{
+            $tables = '';
+        }
+        //合成字段部分
+        if(is_array($fields) == true){
+            $fields = implode(',', $fields);
+        }else{
+            if(is_int($fields) == true){
+                $fields = 'id';
+            }else{
+                
+            }
+        }
+        $sql = 'SELECT '.  $fields.' FROM '.  $tables.' WHERE '.$where.' ORDER BY '.$this->fields[$tables][$order].','.($desc ? 'DESC':'ASC').' LIMIT '.($page-1)*$max.','.$max.'';
+    }
+    
+    public function insert(){
+        
+    }
+    
+    public function update(){
+        
+    }
+    
+    public function delete(){
+        
+    }
+    
+    /**
+     * 合成表部分
+     * @since 4
+     * @param string $tables 表列
+     * @return string
+     */
+    private function get_tables($tables){
+        if(is_array($tables) == true){
+            return implode(',', $this->tables[$tables]);
+        }else{
+            return $this->tables[$tables];
+        }
+    }
+
+    private function get_fields($tables,$fields) {
+        //主键
+        if (is_int($fields) == true) {
+            return $this->fields[$tables][$fields];
+        }
+        //所有字段
+        if($fields == 'ALL'){
+            if(is_array($tables) == true){
+                $return = '';
+                foreach($tables as $v){
+                    $return .= $v.'.'.  implode($v.'.', $this->fields[$v]);
+                }
+                return $return;
+            }else{
+                
+            }
+        }
+        //自定义字段
+        if (is_array($fields) == true) {
+            if(is_array($tables) == true){
+                
+            }else{
+                
+            }
+        }
+    }
+    
+    /**
+     * 获取条件语句
+     * @since 4
+     * @param string $table 表键值
+     * @param int $field 字段键值
+     * @param string $e 算数符号
+     * @param string $value 值
+     * @return string
+     */
+    private function get_where($table,$field,$e,$value){
+        return $this->fields[$table][$field].$e.'\''.$value.'\'';
     }
 
 }
