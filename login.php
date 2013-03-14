@@ -3,9 +3,12 @@
 /**
  * 登陆处理
  * @author fotomxq <fotomxq.me>
- * @version 1
+ * @version 2
  * @package oa
  */
+//临时跳转
+header('Location:init.php');
+
 /**
  * 引入全局定义
  */

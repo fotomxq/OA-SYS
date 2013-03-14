@@ -2,7 +2,7 @@
 /**
  * OA登录首页
  * @author fotomxq <fotomxq.me>
- * @version 1
+ * @version 2
  * @package oa
  */
 require('glob.php');
@@ -70,7 +70,7 @@ require('glob.php');
 
         <div class="container">
 
-            <form class="form-signin">
+            <form class="form-signin" action="login.php">
                 <h2 class="form-signin-heading"><?php echo $website_title; ?></h2>
                 <input name="name" type="text" class="input-block-level" placeholder="用户名">
                 <input name="pass" type="password" class="input-block-level" placeholder="密码">
