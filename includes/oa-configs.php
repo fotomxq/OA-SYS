@@ -3,7 +3,7 @@
 /**
  * 配置信息操作类
  * @author fotomxq <fotomxq.me>
- * @version 3
+ * @version 4
  * @package OA
  */
 class oaconfigs {
@@ -24,12 +24,12 @@ class oaconfigs {
 
     /**
      * 初始化
-     * @since 3
+     * @since 4
      * @param coredb $db 数据库操作句柄
      */
     public function __construct(&$db) {
         $this->db = $db;
-        $this->table_name = $db->tables[4];
+        $this->table_name = $db->tables['configs'];
     }
 
     /**

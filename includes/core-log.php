@@ -3,7 +3,7 @@
 /**
  * 日志操作类
  * @author fotomxq <fotomxq.me>
- * @version 3
+ * @version 4
  * @package 
  */
 class corelog {
@@ -38,14 +38,14 @@ class corelog {
 
     /**
      * 初始化
-     * @since 3
+     * @since 4
      * @param string $ip_addr IP地址
      * @param coredb $db 数据库操作句柄
      * @param boolean $log_on 日志记录开关
      */
     public function __construct($ip_addr, &$db, $log_on = true) {
         $this->db = $db;
-        $this->table_name = $db->tables[1];
+        $this->table_name = $db->tables['log'];
         $this->log_on = $log_on;
         $this->ip_addr = $ip_addr;
     }

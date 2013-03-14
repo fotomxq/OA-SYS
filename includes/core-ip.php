@@ -3,7 +3,7 @@
 /**
  * IP操作类
  * @author fotomxq <fotomxq.me>
- * @version 2
+ * @version 3
  * @package core
  */
 class coreip {
@@ -31,14 +31,14 @@ class coreip {
 
     /**
      * 初始化
-     * @since 2
+     * @since 3
      * @param string $locate_data_file IP定位数据库文件
      * @param coredb $db 数据库操作句柄
      */
     public function __construct($locate_data_file, &$db) {
         $this->locate_data_file = $locate_data_file;
         $this->db = $db;
-        $this->table_name = $db->tables[0];
+        $this->table_name = $db->tables['ip'];
     }
 
     /**
