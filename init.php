@@ -71,9 +71,10 @@ require('glob.php');
               <li class="active"><a href="init.php">主页</a></li>
               <li><a href="#about">设置</a></li>
               <li><a href="#about">消息</a></li>
+              <li><a href="#about">速记</a></li>
               <li><a href="#about">网盘</a></li>
-              <li><a href="#about">计划</a></li>
-              <li><a href="#about">会议室</a></li>
+              <li><a href="#about">任务</a></li>
+              <li><a href="#about">通讯录</a></li>
             </ul>
           </div><!--/.nav-collapse -->
         </div>
@@ -86,16 +87,23 @@ require('glob.php');
           <div class="well sidebar-nav">
             <ul class="nav nav-list">
               <li class="nav-header">个人</li>
-              <li class="active"><a href="#">消息中心</a></li>
+              <li class="active"><a href="#">个人消息</a></li>
               <li><a href="#">网络硬盘</a></li>
-              <li><a href="#">日历计划</a></li>
+              <li><a href="#">生产任务计划</a></li>
+              <li><a href="#">个人业绩考评</a></li>
               <li><a href="#">工作日记本</a></li>
-              <li><a href="#">个人信息设置</a></li>
+              <li><a href="#">通讯录</a></li>
+              <li><a href="#">修改个人信息</a></li>
               <li class="nav-header">共享协作</li>
               <li><a href="#">文件共享中心</a></li>
-              <li><a href="#">生产任务</a></li>
+              <li><a href="#">生产任务中心</a></li>
               <li><a href="#">会议室</a></li>
               <li><a href="#">公共留言薄</a></li>
+              <li class="nav-header">系统</li>
+              <li><a href="#">消息中心</a></li>
+              <li><a href="#">系统设置</a></li>
+              <li><a href="#">备份和恢复</a></li>
+              <li><a href="#">用户和用户组管理</a></li>
             </ul>
           </div><!--/.well -->
         </div><!--/span-->
@@ -103,22 +111,23 @@ require('glob.php');
           <div class="hero-unit">
             <h1>欢迎您</h1>
             <p>中心最新通知：</p>
+            <p>中心最新通知内容中心最新通知中心最新通知内容中心最新通知中心最新通知内容中心最新通知...</p>
             <p><a href="#" class="btn btn-primary btn-large">查看详细 &raquo;</a></p>
           </div>
           <div class="row-fluid">
             <div class="span4">
-              <h2>通知</h2>
-              <p>通知内容通知内容通知内容通知内容通知内容。</p>
+              <h2>通知1</h2>
+              <p>通知内容通知内容通知内容通知内容通知内容通知内容通知内容通知内容通知内容通知内容通知内容通知内容通知内容...</p>
               <p><a class="btn" href="#">查看详细内容 &raquo;</a></p>
             </div><!--/span-->
             <div class="span4">
-              <h2>通知</h2>
-              <p>通知内容通知内容通知内容通知内容通知内容。</p>
+              <h2>短消息1</h2>
+              <p>短消息1内容短消息1内容短消息1内容短消息1内容短消息1内容短消息1内容短消息1内容短消息1内容。</p>
               <p><a class="btn" href="#">查看详细内容 &raquo;</a></p>
             </div><!--/span-->
             <div class="span4">
-              <h2>通知</h2>
-              <p>通知内容通知内容通知内容通知内容通知内容。</p>
+              <h2>通知2</h2>
+              <p>通知内容通知内容通知内容通知内容通知内容通知内容通知内容通知内容通知内容通知内容通知内容通知内容通知内容通知内容通知内容...</p>
               <p><a class="btn" href="#">查看详细内容 &raquo;</a></p>
             </div><!--/span-->
           </div><!--/row-->
