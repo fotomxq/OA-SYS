@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- 主机: localhost
--- 生成日期: 2013 年 03 月 12 日 04:14
+-- 生成日期: 2013 年 03 月 20 日 03:16
 -- 服务器版本: 5.1.44
 -- PHP 版本: 5.3.1
 
@@ -123,16 +123,27 @@ CREATE TABLE IF NOT EXISTS `oa_user` (
   `user_date` datetime NOT NULL COMMENT '创建时间',
   `user_login_date` datetime NOT NULL COMMENT '上一次登录时间',
   `user_ip` bigint(20) unsigned NOT NULL COMMENT '登录IP ID',
-  `user_login_session` char(32) COLLATE utf8_bin NOT NULL COMMENT '登录会话值',
+  `user_session` char(32) COLLATE utf8_bin NOT NULL COMMENT '登录会话值',
   `user_status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '状态',
   `user_remember` tinyint(1) NOT NULL DEFAULT '0' COMMENT '记住我',
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`),
   UNIQUE KEY `user_username` (`user_username`),
+  UNIQUE KEY `user_ip_3` (`user_ip`),
+  UNIQUE KEY `user_ip_4` (`user_ip`),
+  UNIQUE KEY `user_ip_5` (`user_ip`),
   KEY `user_ip` (`user_ip`),
   KEY `user_ip_2` (`user_ip`),
-  KEY `user_group` (`user_group`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1 ;
+  KEY `user_group` (`user_group`),
+  KEY `user_ip_6` (`user_ip`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=2 ;
+
+--
+-- 转存表中的数据 `oa_user`
+--
+
+INSERT INTO `oa_user` (`id`, `user_username`, `user_password`, `user_email`, `user_name`, `user_group`, `user_date`, `user_login_date`, `user_ip`, `user_session`, `user_status`, `user_remember`) VALUES
+(1, 'oasysadmin', 'dd94709528bb1c83d08f3088d4043f4742891f4f', 'admin@admin.com', '管理员', 1, '2013-03-20 11:15:57', '2013-03-20 11:15:57', 2, 'cfcd208495d565ef66e7dff9f98764da', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -148,29 +159,11 @@ CREATE TABLE IF NOT EXISTS `oa_user_group` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`),
   UNIQUE KEY `group_name` (`group_name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=2 ;
 
 --
--- 限制导出的表
+-- 转存表中的数据 `oa_user_group`
 --
 
---
--- 限制表 `core_log`
---
-ALTER TABLE `core_log`
-  ADD CONSTRAINT `core_log_ibfk_2` FOREIGN KEY (`log_ip`) REFERENCES `core_ip` (`id`) ON UPDATE CASCADE;
-
---
--- 限制表 `oa_posts`
---
-ALTER TABLE `oa_posts`
-  ADD CONSTRAINT `oa_posts_ibfk_3` FOREIGN KEY (`post_ip`) REFERENCES `core_ip` (`id`) ON UPDATE CASCADE,
-  ADD CONSTRAINT `oa_posts_ibfk_1` FOREIGN KEY (`post_parent`) REFERENCES `oa_posts` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `oa_posts_ibfk_2` FOREIGN KEY (`post_user`) REFERENCES `oa_user` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
-
---
--- 限制表 `oa_user`
---
-ALTER TABLE `oa_user`
-  ADD CONSTRAINT `oa_user_ibfk_3` FOREIGN KEY (`user_group`) REFERENCES `oa_user` (`user_group`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `oa_user_ibfk_4` FOREIGN KEY (`user_ip`) REFERENCES `core_ip` (`id`) ON UPDATE CASCADE;
+INSERT INTO `oa_user_group` (`id`, `group_name`, `group_power`, `group_status`) VALUES
+(1, 'admin', 'admin', 1);
