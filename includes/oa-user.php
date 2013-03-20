@@ -3,7 +3,7 @@
 /**
  * 用户操作类
  * @author fotomxq <fotomxq.me>
- * @version 5
+ * @version 6
  * @package oa
  */
 class oauser {
@@ -46,56 +46,28 @@ class oauser {
     /**
      * 操作权限标识符
      * @var array
-     * @since 2
+     * @since 6
      */
     private $powers = array(
-        //全局操作权限
+        //管理员
         'admin' => 'ADMIN',
-        //日志查看和归档权限
-        'log' => 'LOG',
-        //日志查看权限
-        'log_view' => 'LOG-VIEW',
-        //日志归档权限
-        'log_files' => 'LOG-FILES',
-        //IP查看和操作权限
-        'ip' => 'IP',
-        //IP查看权限
-        'ip_view' => 'IP-VIEW',
-        //IP操作权限
-        'ip_operate' => 'IP-OP',
-        //配置信息操作权限
-        'config' => 'CONFIG',
-        //用户全局操作权限
-        'user' => 'USER',
-        //用户列表查看权限
-        'user_view_list' => 'USER-VIEW-LIST',
-        //用户自身操作权限
-        'user_self' => 'USER-SELF',
-        //用户操作权限
-        'user_operate' => 'USER-OP',
-        //用户组全局权限
-        'user_group' => 'USER-GROUP',
-        //用户组自身查看权限
-        'user_group_view_self' => 'USER-GROUP-VIEW-SELF',
-        //用户组列表查看权限
-        'user_group_view_list' => 'USER-GROUP-VIEW-LIST',
-        //用户组操作权限
-        'user_group_operate' => 'USER-GROUP-OP');
+        //普通用户
+        'normal' => 'NORMAL');
 
     /**
      * 初始化
-     * @since 1
+     * @since 6
      * @param coredb $db 数据库操作句柄
      */
     public function __construct(&$db) {
         $this->db = $db;
-        $this->table_name_user = $db->tables[2];
-        $this->table_name_group = $db->tables[3];
+        $this->table_name_user = $db->tables['user'];
+        $this->table_name_group = $db->tables['ugroup'];
     }
 
     /**
      * 获取用户列表
-     * @since 5
+     * @since 6
      * @param int $group 用户组ID|null
      * @param int $page 页数
      * @param int $max 页长
@@ -105,7 +77,7 @@ class oauser {
      */
     public function view_user_list($group = null, $page = 1, $max = 10, $order = 0, $desc = false) {
         $return = false;
-        $fields = array('id', 'user_username', 'user_password', 'user_email', 'user_name', 'user_group', 'user_create_date', 'user_create_ip', 'user_login_date', 'user_login_ip', 'user_login_status');
+        $fields = array('id', 'user_username', 'user_password', 'user_email', 'user_name', 'user_group', 'user_date', 'user_login_date', 'user_ip', 'user_login_status');
         if (isset($fields[$order]) == true) {
             $where = '';
             if ($group == null) {
@@ -114,12 +86,12 @@ class oauser {
                 $where = '`user_group` = :group';
             }
             $desc = $desc ? 'DESC' : 'ASC';
-            $sql = 'SELECT `id`,`user_username`,`user_password`,`user_email`,`user_name`,`user_group`,`user_create_date`,`user_create_ip`,`user_login_date`,`user_login_ip`,`user_status` FROM `' . $this->table_name_user . '` WHERE ' . $where . ' ORDER BY ' . $fields[$order] . ' ' . $desc . ' LIMIT ' . ($page - 1) * $max . ',' . $max;
+            $sql = 'SELECT `id`,`user_username`,`user_password`,`user_email`,`user_name`,`user_group`,`user_date`,`user_login_date`,`user_ip`,`user_status` FROM `' . $this->table_name_user . '` WHERE ' . $where . ' ORDER BY ' . $fields[$order] . ' ' . $desc . ' LIMIT ' . ($page - 1) * $max . ',' . $max;
             $sth = $this->db->prepare($sql);
             if ($group != null) {
                 $sth->bindParam(':group', $group);
             }
-            if ($sth->execute() = true) {
+            if ($sth->execute() == true) {
                 $return = $sth->fetchAll(PDO::FETCH_ASSOC);
             }
         }
@@ -191,13 +163,13 @@ class oauser {
 
     /**
      * 获取用户信息
-     * @since 5
+     * @since 6
      * @param int $id 用户ID
      * @return array|boolean
      */
     public function view_user($id) {
         $return = false;
-        $sql = 'SELECT `id`,`user_username`,`user_password`,`user_email`,`user_name`,`user_group`,`user_create_date`,`user_create_ip`,`user_login_date`,`user_login_ip`,`user_status` FROM `' . $this->table_name_user . '` WHERE `id`=:id';
+        $sql = 'SELECT `id`,`user_username`,`user_password`,`user_email`,`user_name`,`user_group`,`user_date`,`user_login_date`,`user_ip`,`user_status` FROM `' . $this->table_name_user . '` WHERE `id`=:id';
         $sth = $this->db->prepare($sql);
         $sth->bindParam(':id', $id, PDO::PARAM_INT | PDO::PARAM_INPUT_OUTPUT);
         if ($sth->execute() == true) {
@@ -226,7 +198,7 @@ class oauser {
     /**
      * 登陆用户
      * <p>完成后注册$_SESSION['login']变量</p>
-     * @since 4
+     * @since 6
      * @param string $user 客户端提交用户名
      * @param string $pass 客户端提交密码明文
      * @param int $ip_id 客户端IP ID
@@ -236,23 +208,25 @@ class oauser {
     public function login($user, $pass, $ip_id, $remember = false) {
         $return = false;
         if ($this->check_username($user) == true && $this->check_password($pass) == true) {
-            $pass_sha1 = sha1($pass);
+            $pass_sha1 = $this->get_password_sha1($pass);
             $session_id = $this->get_session_id();
             //判断session是否存在
             if ($session_id) {
                 //判断用户是否存在以及密码是否匹配
-                $sql = 'SELECT tuser.id,tuser.user_login_ip,tuser.user_login_session,tuser.user_status,tuser.user_remember FROM `' . $this->table_name_user . '` as tuser,`' . $this->table_name_group . '` as tgroup WHERE tuser.user_username = ? and tuser.user_password = ? and tuser.user_group = tgroup.id and tgroup.group_status = 1';
+                $sql = 'SELECT tuser.id,tuser.user_ip,tuser.user_session,tuser.user_status,tuser.user_remember FROM `' . $this->table_name_user . '` as tuser,`' . $this->table_name_group . '` as tgroup WHERE tuser.user_username = :username and tuser.user_password = :password and tuser.user_group = tgroup.id and tgroup.group_status = 1 and tuser.user_stauts = 1';
                 $sth = $this->db->prepare($sql);
-                $sth->bindParam(1, $user, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
-                $sth->bindParam(2, $pass_sha1, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
+                $sth->bindParam(':username', $user, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
+                $sth->bindParam(':password', $pass_sha1, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
                 if ($sth->execute() == true) {
                     $res = $sth->fetch(PDO::FETCH_ASSOC);
                     if ($res['id'] > 0) {
                         $return = true;
                         //更新用户登陆信息
-                        if ($this->update_user($res['id'], NULL, NULL, NULL, NULL, NULL, $ip_id, true, $remember)) {
+                        if ($this->update_user($res['id'], $ip_id, true, $remember)) {
                             //注册session login变量
                             $this->set_session_login($res['id']);
+                            //更新登陆时间
+                            //$this->user_time();
                         }
                     }
                 }
@@ -263,7 +237,7 @@ class oauser {
 
     /**
      * 获取用户登陆状态
-     * @since 3
+     * @since 6
      * @param int $ip_id IP ID
      * @param int $config_user_timeout 用户超时时间（秒）
      * @return boolean
@@ -271,25 +245,28 @@ class oauser {
     public function status($ip_id, $config_user_timeout = 900) {
         $return = false;
         if ($this->get_session_login() > 0) {
-            $timeout = $this->user_time() - NOW();
+            $timeout = $this->user_time() - time();
             if ($timeout > $config_user_timeout) {
                 $return = true;
             } else {
                 $this->set_session_login(0);
             }
         } else {
-            $session = $this->get_session_id();
-            $sql = 'SELECT tuser.id FROM `' . $this->table_name_user . '` as tuser,`' . $this->table_name_group . '` as tgroup WHERE tuser.user_group = tgroup.id and tgroup.group_status = 1 and tuser.user_login_ip = :ip and tuser.user_remember = 1';
+            //$session = $this->get_session_id();
+            $sql = 'SELECT tuser.id,tuser.user_remember as remember FROM `' . $this->table_name_user . '` as tuser,`' . $this->table_name_group . '` as tgroup WHERE tuser.user_group = tgroup.id and tgroup.group_status = 1 and tuser.user_status = 1 and tuser.user_ip = :ip and tuser.user_remember = 1';
             $sth = $this->db->prepare($sql);
             $sth->bindParam(':ip', $ip_id, PDO::PARAM_INT);
             if ($sth->execute() == true) {
                 $res = $sth->fetch(PDO::FETCH_ASSOC);
-                //更新用户登陆信息
-                if ($this->update_user($res['id'], NULL, NULL, NULL, NULL, NULL, $ip_id, true, true)) {
-                    //注册session login变量
-                    $this->set_session_login($res['id']);
-                    //修正登陆超时记录
-                    $this->user_time();
+                //如果查询为记住登陆状态
+                if ($res['id'] > 0) {
+                    //更新用户登陆信息
+                    if ($this->update_user($res['id'], $ip_id, true, $res['remember'])) {
+                        //注册session login变量
+                        $this->set_session_login($res['id']);
+                        //修正登陆超时记录
+                        $this->user_time();
+                    }
                 }
             }
         }
@@ -304,14 +281,14 @@ class oauser {
      */
     public function logout($ip_id) {
         $user_id = $this->get_session_login();
-        $this->update_user($user_id, NULL, NULL, NULL, NULL, NULL, $ip_id, false, false);
+        $this->update_user($user_id, $ip_id, false, false);
         $this->set_session_login(0);
         return true;
     }
 
     /**
      * 添加一个新用户
-     * @since 5
+     * @since 6
      * @param string $username 用户名
      * @param string $password 密码明文
      * @param string $email 邮箱
@@ -340,10 +317,10 @@ class oauser {
                 return $return;
             }
             //插入新的记录
-            $sql = 'INSERT INTO `' . $this->table_name_user . '`(`user_username`,`user_password`,`user_email`,`user_name`,`user_group`,`user_create_date`,`user_create_ip`,`user_login_date`,`user_login_ip`,`user_login_session`) VALUES(:username,:password,:email,:name,:group,NOW(),:ip,NOW(),:ip,:session)';
+            $sql = 'INSERT INTO `' . $this->table_name_user . '`(`user_username`,`user_password`,`user_email`,`user_name`,`user_group`,`user_date`,`user_login_date`,`user_ip`,`user_session`,`user_status`,`user_remember`) VALUES(:username,:password,:email,:name,:group,NOW(),NOW(),:ip,:session,0,0)';
             $sth = $this->db->prepare($sql);
             $sth->bindParam(':username', $username, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
-            $password = sha1($password);
+            $password = $this->get_password_sha1($password);
             $sth->bindParam(':password', $password, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
             $sth->bindParam(':email', $email, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
             $sth->bindParam(':name', $name, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
@@ -351,7 +328,7 @@ class oauser {
             $sth->bindParam(':ip', $ip_id, PDO::PARAM_INT);
             $session = md5('0');
             $sth->bindParam(':session', $session);
-            if($sth->execute() == true){
+            if ($sth->execute() == true) {
                 $return = $this->db->lastInsertId();
             }
         }
@@ -367,20 +344,20 @@ class oauser {
      */
     public function add_group($name, $power) {
         $return = false;
-        if($this->check_name($name) == true && $this->check_is_power($power) == true){
-            $sql_select = 'SELECT `id` FROM `'.$this->table_name_group.'` WHERE `group_name` = :name';
+        if ($this->check_name($name) == true && $this->check_is_power($power) == true) {
+            $sql_select = 'SELECT `id` FROM `' . $this->table_name_group . '` WHERE `group_name` = :name';
             $sth_select = $this->db->prepare($sql_select);
-            $sth_select->bindParam(':name', $name,PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
-            if($sth_select->execute() == true){
+            $sth_select->bindParam(':name', $name, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
+            if ($sth_select->execute() == true) {
                 $res_select = $sth_select->fetchColumn();
-                if($res_select){
+                if ($res_select) {
                     return $return;
                 }
-                $sql = 'INSERT INTO `'.$this->table_name_group.'`(`group_name`,`group_power`,`group_status`) VALUES(:name,:power,\'1\')';
+                $sql = 'INSERT INTO `' . $this->table_name_group . '`(`group_name`,`group_power`,`group_status`) VALUES(:name,:power,\'1\')';
                 $sth = $this->db->prepare($sql);
-                $sth->bindParam(':name', $name,PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
-                $sth->bindParam(':power', $power,PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
-                if($sth->execute() == true){
+                $sth->bindParam(':name', $name, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
+                $sth->bindParam(':power', $power, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
+                if ($sth->execute() == true) {
                     $return = $this->db->lastInsertId();
                 }
             }
@@ -388,10 +365,38 @@ class oauser {
         return $return;
     }
 
-    public function edit_user($id,$username,$password,$email,$name,$group) {
+    /**
+     * 修改用户
+     * @since 6
+     * @param int $id 主键
+     * @param string $username 用户名
+     * @param string $password 密码明文
+     * @param string $email 邮箱
+     * @param string $name 昵称
+     * @param int $group 用户组ID
+     * @return boolean
+     */
+    public function edit_user($id, $username, $password, $email, $name, $group) {
         $return = false;
-        $sql = 'UPDATE `'.$this->table_name_user.'` SET `user_username` = :username,`user_password` = :password,`user_email` = :email,`user_name` = :name,`user_group` = :group WHERE `id` = :id';
-        
+        if ($this->check_int($id) == true && $this->check_username($username) == true && $this->check_password($password) == true && $this->check_email($email) == true && $this->check_name($name) && $this->check_int($group) == true) {
+            $group_view = $this->view_group($group);
+            if ($group_view == false) {
+                return $return;
+            }
+            $sql = 'UPDATE `' . $this->table_name_user . '` SET `user_username` = :username,`user_password` = :password,`user_email` = :email,`user_name` = :name,`user_group` = :group WHERE `id` = :id';
+            $sth = $this->db->prepare($sql);
+            $sth->bindParam(':id', $id, PDO::PARAM_INT | PDO::PARAM_INPUT_OUTPUT);
+            $sth->bindParam(':username', $username, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
+            $password = $this->get_password_sha1($password);
+            $sth->bindParam(':password', $password, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
+            $sth->bindParam(':email', $email, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
+            $sth->bindParam(':name', $name, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
+            $sth->bindParam(':group', $group_view['id']);
+            if ($sth->execute() == true) {
+                $return = true;
+            }
+        }
+
         return $return;
     }
 
@@ -404,17 +409,17 @@ class oauser {
      * @param boolean $status 启用状态
      * @return boolean
      */
-    public function edit_group($id,$name,$power,$status) {
+    public function edit_group($id, $name, $power, $status) {
         $return = false;
-        if($this->check_name($name) == true && $this->check_is_power($power) == true){
-            $sql = 'UPDATE `'.$this->table_name_group.'` SET `group_name` = :name,`group_power` = :power,`group_status` = :status WHERE `id` = :id';
+        if ($this->check_name($name) == true && $this->check_is_power($power) == true) {
+            $sql = 'UPDATE `' . $this->table_name_group . '` SET `group_name` = :name,`group_power` = :power,`group_status` = :status WHERE `id` = :id';
             $sth = $this->db->prepare($sql);
-            $sth->bindParam(':id', $id,PDO::PARAM_INT | PDO::PARAM_INPUT_OUTPUT);
-            $sth->bindParam(':name', $name,PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
-            $sth->bindParam(':power', $power,PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
-            $status = $status ? 1:0;
-            $sth->bindParam(':status', $status,PDO::PARAM_INT);
-            if($sth->execute() == true){
+            $sth->bindParam(':id', $id, PDO::PARAM_INT | PDO::PARAM_INPUT_OUTPUT);
+            $sth->bindParam(':name', $name, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
+            $sth->bindParam(':power', $power, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
+            $status = $status ? 1 : 0;
+            $sth->bindParam(':status', $status, PDO::PARAM_INT);
+            if ($sth->execute() == true) {
                 $return = true;
             }
         }
@@ -428,12 +433,12 @@ class oauser {
      * @return boolean
      */
     public function del_user($id) {
-        if($this->check_int($id) == false){
+        if ($this->check_int($id) == false) {
             return false;
         }
-        $sql = 'DELETE FROM `'.$this->table_name_user.'` WHERE `id` = :id';
+        $sql = 'DELETE FROM `' . $this->table_name_user . '` WHERE `id` = :id';
         $sth = $this->db->prepare($sql);
-        $sth->bindParam(':id', $id,PDO::PARAM_INT | PDO::PARAM_INPUT_OUTPUT);
+        $sth->bindParam(':id', $id, PDO::PARAM_INT | PDO::PARAM_INPUT_OUTPUT);
         return $sth->execute();
     }
 
@@ -445,18 +450,18 @@ class oauser {
      * @return boolean
      */
     public function del_group($id) {
-        if($this->check_int($id) == false){
+        if ($this->check_int($id) == false) {
             return false;
         }
-        $sql_user = 'DELETE FROM `'.$this->table_name_user.'` WHERE `user_group` = :id';
+        $sql_user = 'DELETE FROM `' . $this->table_name_user . '` WHERE `user_group` = :id';
         $sth_user = $this->db->prepare($sql_user);
-        $sth_user->bindParam(':id', $id,PDO::PARAM_INT | PDO::PARAM_INPUT_OUTPUT);
-        if($sth_user->execute() != true){
+        $sth_user->bindParam(':id', $id, PDO::PARAM_INT | PDO::PARAM_INPUT_OUTPUT);
+        if ($sth_user->execute() != true) {
             return false;
         }
-        $sql_group = 'DELETE FROM `'.$this->table_name_group.'` WHERE `id` = :id';
+        $sql_group = 'DELETE FROM `' . $this->table_name_group . '` WHERE `id` = :id';
         $sth_group = $this->db->prepare($sql_group);
-        $sth_group->bindParam(':id', $id,PDO::PARAM_INT | PDO::PARAM_INPUT_OUTPUT);
+        $sth_group->bindParam(':id', $id, PDO::PARAM_INT | PDO::PARAM_INPUT_OUTPUT);
         return $sth_group->execute();
     }
 
@@ -483,67 +488,41 @@ class oauser {
     }
 
     /**
-     * 更新用户表内容
-     * @since 1
+     * 退出登陆更新用户
+     * @since 6
      * @param int $id 用户ID
-     * @param string $username 用户名
-     * @param string $password 密码明文
-     * @param string $email 邮箱
-     * @param string $name 名字
-     * @param int $group 用户组ID
-     * @param int $login_ip IP ID
+     * @param int $ip IP ID
      * @param boolean $status 用户登陆状态
      * @param boolean $remember 是否记住用户
      * @return boolean
      */
-    private function update_user($id, $username, $password, $email, $name, $group, $login_ip = false, $status = false, $remember = false) {
+    private function update_user($id, $ip = false, $status = false, $remember = false) {
         $return = false;
-        $sql = 'UPDATE `' . $this->table_name_user . '` SET `user_username` = :user,`user_password` = :pass,`user_email` = :email,`user_name` = :name,`user_group` = :group';
-        if ($username) {
-            $sql .= '`user_username` = :user';
-        }
-        if ($password) {
-            $password = sha1($password);
-            $sql .= '`user_password` = :pass';
-        }
-        if ($email) {
-            $sql .= '`user_email` = :email';
-        }
-        if ($name) {
-            $sql .= '`user_name` = :name';
-        }
-        if ($group) {
-            $sql .= '`user_group` = :group';
-        }
+        $sql = 'UPDATE `' . $this->table_name_user . '` SET `user_login_date` = NOW(),`user_ip` = :ip,`user_session` = :session,`user_status` = :status,`user_remember` = :remember WHERE `id` = :id';
         //如果提供了IP参数，则更新登陆相关项
-        if ($login_ip) {
-            $status = $status ? 1 : 0;
-            $remember = $remember ? 1 : 0;
-            $session = $this->get_session_id();
-            $sql .= ',`user_login_date` = NOW(),`user_login_ip` = :ip,`user_session` = :session,`user_status` = :status,`user_remember` = :remember';
-        }
-        $sql .= ' WHERE `id` = :id';
+        $status = $status ? 1 : 0;
+        $remember = $remember ? 1 : 0;
+        $session = $this->get_session_id();
         $sth = $this->db->prepare($sql);
-        $sth->bindParam(':user', $username);
-        $sth->bindParam(':pass', $password);
-        $sth->bindParam(':email', $email);
-        $sth->bindParam(':name', $name);
-        $sth->bindParam(':group', $group);
-        $sth->bindParam(':ip', $login_ip);
-        $sth->bindParam(':session', $session);
-        $sth->bindParam(':status', $status);
-        $sth->bindParam(':remember', $remember);
+        $sth->bindParam(':id', $id);
+        $sth->bindParam(':ip', $login_ip, PDO::PARAM_INT);
+        $sth->bindParam(':session', $session, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
+        $sth->bindParam(':status', $status, PDO::PARAM_INT);
+        $sth->bindParam(':remember', $remember, PDO::PARAM_INT);
         $return = $sth->execute();
         return $return;
     }
 
     /**
      * 获取session login变量
-     * @since 2
+     * @since 6
      * @return int
      */
     private function get_session_login() {
-        return $_SESSION[$this->session_login_name];
+        if (isset($_SESSION[$this->session_login_name]) == true) {
+            return $_SESSION[$this->session_login_name];
+        }
+        return false;
     }
 
     /**
@@ -562,7 +541,7 @@ class oauser {
      */
     private function user_time() {
         $time = 0;
-        $now_time = NOW();
+        $now_time = time();
         if (isset($_SESSION[$this->session_login_time_name]) == true) {
             $time = $_SESSION[$this->session_login_time_name];
         } else {
@@ -619,12 +598,12 @@ class oauser {
 
     /**
      * 过滤名字
-     * @since 3
+     * @since 6
      * @param string $name 名字
      * @return string|boolean
      */
     private function check_name($name) {
-        if (filter_var($email, FILTER_SANITIZE_STRING) != false && strlen($name) < 300) {
+        if (filter_var($name, FILTER_SANITIZE_STRING) != false && strlen($name) < 300) {
             return $name;
         }
         return false;
@@ -642,16 +621,25 @@ class oauser {
 
     /**
      * 检查权限是否存在
-     * @since 4
+     * @since 6
      * @param string $power 权限字符串 eg:USER|USER-GROUP|IP
      * @return boolean
      */
     private function check_is_power($power) {
-        $power_list = str_split($power, '|');
-        if (count(array_diff($power_list, $this->powers)) > 0) {
-            return false;
+        if ($power == 'admin' || $power == 'normal') {
+            return true;
         }
-        return true;
+        return false;
+    }
+
+    /**
+     * 返回加密的密码
+     * @since 6
+     * @param string $password 密码明文
+     * @return string
+     */
+    private function get_password_sha1($password) {
+        return sha1($password);
     }
 
 }

@@ -3,7 +3,7 @@
 /**
  * 全局设定
  * @author fotomxq <fotomxq.me>
- * @version 4
+ * @version 5
  * @package Core
  */
 /**
@@ -80,4 +80,9 @@ $log = new corelog($ip_arr['addr'], $db, true);
  * @since 2
  */
 $website_title = $oaconfig->load('WEB_TITLE');
+
+require(DIR_LIB.DS.'oa-user.php');
+$oauser = new oauser($db);
+echo $oauser->login('oasysadmin', 'adminadmin', 1);
+//echo $oauser->status(1);
 ?>
