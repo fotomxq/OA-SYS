@@ -2,10 +2,15 @@
 /**
  * 登录后首页
  * @author fotomxq <fotomxq.me>
- * @version 1
+ * @version 2
  * @package oa
  */
-require('glob.php');
+
+/**
+ * 引入用户登陆检测模块(包含全局引用)
+ * @since 2
+ */
+require('logged.php');
 ?>
 
 <!DOCTYPE html>
@@ -65,7 +70,7 @@ require('glob.php');
           <a class="brand" href="#"><?php echo $website_title; ?></a>
           <div class="nav-collapse collapse">
             <p class="navbar-text pull-right">
-              <a href="#" class="navbar-link">退出登陆</a>
+              <a href="logout.php" class="navbar-link">退出登陆</a>
             </p>
             <ul class="nav">
               <li class="active"><a href="init.php">主页</a></li>

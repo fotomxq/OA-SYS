@@ -1,4 +1,5 @@
 <?php
+
 /**
  * 验证码
  * @author fotomxq <fotomxq.me>
@@ -8,5 +9,7 @@
 sleep(1);
 require('glob.php');
 require('includes/plug-vcode.php');
-plugvcode(4,20,150,35);
+require('includes/plug-headernocache.php');
+plugheadernocache();
+plugvcode(4, 20, 150, 35);
 ?>

@@ -3,7 +3,7 @@
 /**
  * 用户操作类
  * @author fotomxq <fotomxq.me>
- * @version 6
+ * @version 7
  * @package oa
  */
 class oauser {
@@ -198,7 +198,7 @@ class oauser {
     /**
      * 登陆用户
      * <p>完成后注册$_SESSION['login']变量</p>
-     * @since 6
+     * @since 7
      * @param string $user 客户端提交用户名
      * @param string $pass 客户端提交密码明文
      * @param int $ip_id 客户端IP ID
@@ -213,21 +213,21 @@ class oauser {
             //判断session是否存在
             if ($session_id) {
                 //判断用户是否存在以及密码是否匹配
-                $sql = 'SELECT tuser.id,tuser.user_ip,tuser.user_session,tuser.user_status,tuser.user_remember FROM `' . $this->table_name_user . '` as tuser,`' . $this->table_name_group . '` as tgroup WHERE tuser.user_username = :username and tuser.user_password = :password and tuser.user_group = tgroup.id and tgroup.group_status = 1 and tuser.user_stauts = 1';
+                $sql = 'SELECT u.id FROM `' . $this->table_name_user . '` as u,`' . $this->table_name_group . '` as g WHERE u.user_username = :username and u.user_password = :password and u.user_group = g.id and g.group_status = 1';
                 $sth = $this->db->prepare($sql);
                 $sth->bindParam(':username', $user, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
                 $sth->bindParam(':password', $pass_sha1, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
                 if ($sth->execute() == true) {
                     $res = $sth->fetch(PDO::FETCH_ASSOC);
                     if ($res['id'] > 0) {
-                        $return = true;
                         //更新用户登陆信息
                         if ($this->update_user($res['id'], $ip_id, true, $remember)) {
                             //注册session login变量
                             $this->set_session_login($res['id']);
                             //更新登陆时间
-                            //$this->user_time();
+                            $this->user_time();
                         }
+                        $return = true;
                     }
                 }
             }
@@ -237,7 +237,7 @@ class oauser {
 
     /**
      * 获取用户登陆状态
-     * @since 6
+     * @since 7
      * @param int $ip_id IP ID
      * @param int $config_user_timeout 用户超时时间（秒）
      * @return boolean
@@ -245,15 +245,15 @@ class oauser {
     public function status($ip_id, $config_user_timeout = 900) {
         $return = false;
         if ($this->get_session_login() > 0) {
-            $timeout = $this->user_time() - time();
-            if ($timeout > $config_user_timeout) {
+            $timeout = time() - $this->user_time();
+            if ($timeout < $config_user_timeout) {
                 $return = true;
             } else {
                 $this->set_session_login(0);
             }
         } else {
             //$session = $this->get_session_id();
-            $sql = 'SELECT tuser.id,tuser.user_remember as remember FROM `' . $this->table_name_user . '` as tuser,`' . $this->table_name_group . '` as tgroup WHERE tuser.user_group = tgroup.id and tgroup.group_status = 1 and tuser.user_status = 1 and tuser.user_ip = :ip and tuser.user_remember = 1';
+            $sql = 'SELECT u.id,u.user_remember as remember FROM `' . $this->table_name_user . '` as u,`' . $this->table_name_group . '` as g WHERE u.user_group = g.id and g.group_status = 1 and u.user_status = 1 and u.user_ip = :ip and u.user_remember = 1';
             $sth = $this->db->prepare($sql);
             $sth->bindParam(':ip', $ip_id, PDO::PARAM_INT);
             if ($sth->execute() == true) {

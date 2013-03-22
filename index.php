@@ -2,7 +2,7 @@
 /**
  * OA登录首页
  * @author fotomxq <fotomxq.me>
- * @version 2
+ * @version 4
  * @package oa
  */
 require('glob.php');
@@ -70,14 +70,14 @@ require('glob.php');
 
         <div class="container">
 
-            <form class="form-signin" action="login.php">
+            <form class="form-signin" action="login.php" method="post">
                 <h2 class="form-signin-heading"><?php echo $website_title; ?></h2>
-                <input name="name" type="text" class="input-block-level" placeholder="用户名">
+                <input name="user" type="text" class="input-block-level" placeholder="用户名">
                 <input name="pass" type="password" class="input-block-level" placeholder="密码">
                 <input name="vcode" type="password" class="input-block-level" placeholder="验证码">
                 <a href="#"><img onclick="javascript:$(this).attr('src', 'vcode.php?r=' + Math.random());" src="vcode.php" style="width:150px;height:35px;"></a>
                 <label class="checkbox">
-                    <input type="checkbox" value="remember-me"> 记住我
+                    <input name="remember" type="checkbox" value="remember-me"> 记住我
                 </label>
                 <button class="btn btn-large btn-primary" type="submit">登陆</button>
             </form>
