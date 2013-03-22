@@ -3,7 +3,7 @@
 /**
  * 全局设定
  * @author fotomxq <fotomxq.me>
- * @version 5
+ * @version 6
  * @package Core
  */
 /**
@@ -77,7 +77,10 @@ $log = new corelog($ip_arr['addr'], $db, true);
 
 /**
  * 获取页面基本配置内容
- * @since 2
+ * @since 6
  */
+//网站标题
 $website_title = $oaconfig->load('WEB_TITLE');
+//页脚信息
+$website_footer = $oaconfig->load('PAGE_FOOTER_COPYRIGHT');
 ?>

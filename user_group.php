@@ -1,22 +1,33 @@
 <?php
+
 /**
- * 登录后首页
+ * 用户组页面
  * @author fotomxq <fotomxq.me>
- * @version 3
+ * @version 1
  * @package oa
  */
 /**
  * 引入用户登陆检测模块(包含全局引用)
- * @since 2
+ * @since 1
  */
 require('logged.php');
+
+/**
+ * 初始化变量
+ */
+$user_group = isset($_POST['user_group']) ? $_POST['user_group'] : null;
+
+/**
+ * 获取用户列表记录数
+ */
+$userlist_row = $oauser->get_user_row($user_group);
 ?>
 
 <!DOCTYPE html>
 <html>
     <head>
         <meta charset="utf-8">
-        <title><?php echo $website_title; ?> - 通知中心</title>
+        <title><?php echo $website_title; ?> - 用户组</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="description" content="">
         <meta name="author" content="">
@@ -66,7 +77,7 @@ require('logged.php');
                     <div class="well sidebar-nav">
                         <ul class="nav nav-list">
                             <li class="nav-header">个人</li>
-                            <li class="active"><a href="#">个人消息</a></li>
+                            <li><a href="#">个人消息</a></li>
                             <li><a href="#">网络硬盘</a></li>
                             <li><a href="#">生产任务计划</a></li>
                             <li><a href="#">个人业绩考评</a></li>
@@ -82,34 +93,34 @@ require('logged.php');
                             <li><a href="#">消息中心</a></li>
                             <li><a href="#">系统设置</a></li>
                             <li><a href="#">备份和恢复</a></li>
-                            <li><a href="user.php" target="_self">用户和用户组管理</a></li>
+                            <li><a href="user.php" target="_self">用户管理</a></li>
+                            <li class="active"><a href="user_group.php" target="_self">用户组管理</a></li>
                         </ul>
                     </div><!--/.well -->
                 </div><!--/span-->
                 <div class="span9">
-                    <div class="hero-unit">
-                        <h1>欢迎您</h1>
-                        <p>中心最新通知：</p>
-                        <p>中心最新通知内容中心最新通知中心最新通知内容中心最新通知中心最新通知内容中心最新通知...</p>
-                        <p><a href="#" class="btn btn-primary btn-large">查看详细 &raquo;</a></p>
+                    <h2>用户列表</h2>
+                    <table class="table table-hover table-bordered">
+                        <thead>
+                            <td>ID</td>
+                            <td>用户名</td>
+                            <td>昵称</td>
+                            <td>所属用户组</td>
+                            <td>最后登陆时间</td>
+                            <td>最后登陆IP</td>
+                            <td>操作</td>
+                        </thead>
+                        <tbody>
+                            <td></td>
+                        </tbody>
+                    </table>
+                    <div class="btn-toolbar">
+                        <div class="btn-group">
+                            <button class="btn" type="button">首页</button>
+                            <button class="btn" type="button">尾页</button>
+                        </div>
                     </div>
-                    <div class="row-fluid">
-                        <div class="span4">
-                            <h2>通知1</h2>
-                            <p>通知内容通知内容通知内容通知内容通知内容通知内容通知内容通知内容通知内容通知内容通知内容通知内容通知内容...</p>
-                            <p><a class="btn" href="#">查看详细内容 &raquo;</a></p>
-                        </div><!--/span-->
-                        <div class="span4">
-                            <h2>短消息1</h2>
-                            <p>短消息1内容短消息1内容短消息1内容短消息1内容短消息1内容短消息1内容短消息1内容短消息1内容。</p>
-                            <p><a class="btn" href="#">查看详细内容 &raquo;</a></p>
-                        </div><!--/span-->
-                        <div class="span4">
-                            <h2>通知2</h2>
-                            <p>通知内容通知内容通知内容通知内容通知内容通知内容通知内容通知内容通知内容通知内容通知内容通知内容通知内容通知内容通知内容...</p>
-                            <p><a class="btn" href="#">查看详细内容 &raquo;</a></p>
-                        </div><!--/span-->
-                    </div><!--/row-->
+                    <h2>用户组列表</h2>
                 </div><!--/span-->
             </div><!--/row-->
 
