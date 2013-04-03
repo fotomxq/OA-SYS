@@ -82,16 +82,40 @@ if (isset($init_page_arr[$init_page]) == false) {
                     <a class="brand" href="#"><?php echo $website_title; ?></a>
                     <div class="nav-collapse collapse">
                         <p class="navbar-text pull-right">
-                            <a href="logout.php" class="navbar-link">退出登陆</a>
+                            <a href="logout.php" class="navbar-link"><i class="icon-off icon-white"></i> 退出登陆</a>
                         </p>
                         <ul class="nav">
-                            <li class="active"><a href="init.php">主页</a></li>
-                            <li><a href="#about">设置</a></li>
-                            <li><a href="#about">消息</a></li>
-                            <li><a href="#about">速记</a></li>
-                            <li><a href="#about">网盘</a></li>
-                            <li><a href="#about">任务</a></li>
-                            <li><a href="#about">通讯录</a></li>
+                            <li class="active"><a href="init.php"><i class="icon-home icon-white"></i> 主页</a></li>
+                            <li class="dropdown">
+                                <a  href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-user icon-white"></i> 个人中心<b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="init.php?init=1"><i class="icon-envelope"></i> 个人消息</a></li>
+                                    <li><a href="init.php?init=2"><i class="icon-hdd"></i> 网络硬盘</a></li>
+                                    <li><a href="init.php?init=3"><i class="icon-list-alt"></i> 计划任务</a></li>
+                                    <li><a href="init.php?init=4"><i class="icon-check"></i> 业绩考评</a></li>
+                                    <li><a href="init.php?init=5"><i class="icon-pencil"></i> 工作日记</a></li>
+                                    <li><a href="init.php?init=6"><i class="icon-book"></i> 通讯录</a></li>
+                                    <li><a href="init.php?init=7"><i class="icon-user"></i> 修改信息</a></li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a  href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-retweet icon-white"></i> 共享协作<b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="init.php?init=8"><i class="icon-share"></i> 文件共享中心</a></li>
+                                    <li><a href="init.php?init=9"><i class="icon-tasks"></i> 生产任务中心</a></li>
+                                    <li><a href="init.php?init=10"><i class="icon-comment"></i> 公共留言薄</a></li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a  href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-wrench icon-white"></i> 系统<b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="init.php?init=11"><i class="icon-envelope"></i> 消息中心</a></li>
+                                    <li><a href="init.php?init=12"><i class="icon-asterisk"></i> 系统设置</a></li>
+                                    <li><a href="init.php?init=13"><i class="icon-random"></i> 备份和恢复</a></li>
+                                    <li><a href="init.php?init=14" target="_self"><i class="icon-user"></i> 用户管理</a></li>
+                                    <li><a href="init.php?init=15" target="_self"><i class="icon-th-large"></i> 用户组管理</a></li>
+                                </ul>
+                            </li>
                         </ul>
                     </div><!--/.nav-collapse -->
                 </div>
@@ -104,23 +128,23 @@ if (isset($init_page_arr[$init_page]) == false) {
                     <div class="well sidebar-nav">
                         <ul class="nav nav-list">
                             <li class="nav-header">个人中心</li>
-                            <li><a href="init.php?init=1">个人消息</a></li>
-                            <li><a href="init.php?init=2">网络硬盘</a></li>
-                            <li><a href="init.php?init=3">生产任务计划</a></li>
-                            <li><a href="init.php?init=4">个人业绩考评</a></li>
-                            <li><a href="init.php?init=5">工作日记本</a></li>
-                            <li><a href="init.php?init=6">通讯录</a></li>
-                            <li><a href="init.php?init=7">修改个人信息</a></li>
+                            <li><a href="init.php?init=1"><i class="icon-envelope"></i> 个人消息</a></li>
+                            <li><a href="init.php?init=2"><i class="icon-hdd"></i> 网络硬盘</a></li>
+                            <li><a href="init.php?init=3"><i class="icon-list-alt"></i> 计划任务</a></li>
+                            <li><a href="init.php?init=4"><i class="icon-check"></i> 业绩考评</a></li>
+                            <li><a href="init.php?init=5"><i class="icon-pencil"></i> 工作日记</a></li>
+                            <li><a href="init.php?init=6"><i class="icon-book"></i> 通讯录</a></li>
+                            <li><a href="init.php?init=7"><i class="icon-user"></i> 修改信息</a></li>
                             <li class="nav-header">共享协作</li>
-                            <li><a href="init.php?init=8">文件共享中心</a></li>
-                            <li><a href="init.php?init=9">生产任务中心</a></li>
-                            <li><a href="init.php?init=10">公共留言薄</a></li>
+                            <li><a href="init.php?init=8"><i class="icon-share"></i> 文件共享中心</a></li>
+                            <li><a href="init.php?init=9"><i class="icon-tasks"></i> 生产任务中心</a></li>
+                            <li><a href="init.php?init=10"><i class="icon-comment"></i> 公共留言薄</a></li>
                             <li class="nav-header">系统</li>
-                            <li><a href="init.php?init=11">消息中心</a></li>
-                            <li><a href="init.php?init=12">系统设置</a></li>
-                            <li><a href="init.php?init=13">备份和恢复</a></li>
-                            <li><a href="init.php?init=14" target="_self">用户管理</a></li>
-                            <li><a href="init.php?init=15" target="_self">用户组管理</a></li>
+                            <li><a href="init.php?init=11"><i class="icon-envelope"></i> 消息中心</a></li>
+                            <li><a href="init.php?init=12"><i class="icon-asterisk"></i> 系统设置</a></li>
+                            <li><a href="init.php?init=13"><i class="icon-random"></i> 备份和恢复</a></li>
+                            <li><a href="init.php?init=14" target="_self"><i class="icon-user"></i> 用户管理</a></li>
+                            <li><a href="init.php?init=15" target="_self"><i class="icon-th-large"></i> 用户组管理</a></li>
                         </ul>
                     </div><!--/.well -->
                 </div><!--/span-->
@@ -138,8 +162,8 @@ if (isset($init_page_arr[$init_page]) == false) {
             <footer>
                 <p>
                     <?php
-                        echo $website_footer;
-                     ?>
+                    echo $website_footer;
+                    ?>
                 </p>
             </footer>
 

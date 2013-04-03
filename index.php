@@ -22,7 +22,9 @@ require('glob.php');
             body {
                 padding-top: 40px;
                 padding-bottom: 40px;
-                background-color: #f5f5f5;
+                background-image: url(includes/images/login-bg.png);
+                background-repeat: no-repeat round;
+                background-size: 100% auto;
             }
 
             .form-signin {
