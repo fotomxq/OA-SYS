@@ -34,6 +34,29 @@ if (isset($init_page_arr[$init_page]) == false) {
         <meta name="description" content="">
         <meta name="author" content="">
 
+        <!-- Le javascript -->
+        <script src="includes/js/jquery.js"></script>
+        <script src="includes/js/bootstrap.js"></script>
+        <script>
+            //消息函数
+            function msg(data,success,error){
+                var id = "#msg";
+                if(data=="2"){
+                    $(id).attr("class","alert alert-success");
+                    $(id).append(success);
+                }else{
+                    $(id).attr("class","alert alert-error");
+                    $(id).append(error);
+                }
+            }
+            
+            //延迟刷新或跳转页面模块
+            var t;
+            function tourl(t,url){
+                t = setTimeout("window.location = '"+url+"'",t);
+            }
+        </script>
+
         <!-- Le styles -->
         <link href="includes/css/bootstrap.css" rel="stylesheet">
         <style type="text/css">
@@ -149,6 +172,7 @@ if (isset($init_page_arr[$init_page]) == false) {
                     </div><!--/.well -->
                 </div><!--/span-->
                 <div class="span9">
+                    <div id="msg" class="alert alert-success hide"><button type="button" class="close" data-dismiss="alert">&times;</button></div>
                     <?php
                     /**
                      * 引入内部内容
@@ -168,12 +192,6 @@ if (isset($init_page_arr[$init_page]) == false) {
             </footer>
 
         </div><!--/.fluid-container-->
-
-        <!-- Le javascript
-        ================================================== -->
-        <!-- Placed at the end of the document so the pages load faster -->
-        <script src="includes/js/jquery.js"></script>
-        <script src="includes/js/bootstrap.js"></script>
 
     </body>
 </html>

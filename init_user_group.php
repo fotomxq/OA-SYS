@@ -2,7 +2,7 @@
 /**
  * 用户组页面
  * @author fotomxq <fotomxq.me>
- * @version 1
+ * @version 2
  * @package oa
  */
 if (isset($init_page) == false) {
@@ -12,32 +12,181 @@ if (isset($init_page) == false) {
 /**
  * 初始化变量
  */
-$user_group = isset($_POST['user_group']) ? $_POST['user_group'] : null;
+$page = 1;
+if(isset($_GET['page']) == true){
+    $page = $_GET['page'];
+}
+$max = 10;
 
 /**
- * 获取用户列表记录数
+ * 获取用户组列表记录数
  */
-$userlist_row = $oauser->get_user_row($user_group);
+$group_list_row = $oauser->get_group_row();
+
+/**
+ * 计算页码
+ */
+if($page < 1){
+    $page = 1;
+}
+$page_max = ceil($group_list_row/$max);
+if($page > $page_max){
+    $page = $page_max;
+}
+$page_prev = $page-1;
+$page_next = $page+1;
+
+/**
+ * 获取用户组列表
+ */
+$group_list = $oauser->view_group_list($page);
 ?>
-<h2>用户列表</h2>
-<table class="table table-hover table-bordered">
+<h2>用户组管理</h2>
+<table class="table table-hover table-bordered table-striped">
     <thead>
-    <td>ID</td>
-    <td>用户名</td>
-    <td>昵称</td>
-    <td>所属用户组</td>
-    <td>最后登陆时间</td>
-    <td>最后登陆IP</td>
-    <td>操作</td>
-</thead>
-<tbody>
-<td></td>
-</tbody>
+        <tr>
+            <th>ID</th>
+            <th>用户组名称</th>
+            <th>权限</th>
+            <th>状态</th>
+            <th>操作</th>
+        </tr>
+    </thead>
+    <tbody id="group_list">
+        <?php if($group_list){ foreach($group_list as $k=>$v){ ?>
+        <tr>
+            <td><?php echo $v['id']; ?></td>
+            <td><?php echo $v['group_name']; ?></td>
+            <td><?php if($v['group_power'] == 'admin'){ echo '管理员'; }else{ echo '普通用户'; } ?></td>
+            <td><?php echo $v['group_status'] ? '正常':'已禁用'; ?></td>
+            <td><div class="btn-group"><button href="#group_edit" role="button" class="btn" data-toggle="modal">编辑</button><button class="btn btn-danger">删除</button></div></td>
+        </tr>
+        <?php } } ?>
+        <tr class="info">
+            <td></td>
+            <td><input type="text" id="add_name" placeholder="组名称"></td>
+            <td><select id="add_power"><option value="admin">管理员</option><option value="normal">普通用户</option></select></td>
+            <td>启用</td>
+            <td><button href="#add" type="submit" class="btn btn-success" type="button">添加</button></td>
+        </tr>
+    </tbody>
 </table>
-<div class="btn-toolbar">
-    <div class="btn-group">
-        <button class="btn" type="button">首页</button>
-        <button class="btn" type="button">尾页</button>
+
+<!-- 页码 -->
+<ul class="pager">
+    <li class="previous<?php if($page<=1){ echo ' disabled'; } ?>">
+        <a href="init.php?init=15&page=<?php echo $page_prev; ?>">&larr; 上一页</a>
+    </li>
+    <li class="next<?php if($page>=$page_max){ echo ' disabled'; } ?>">
+        <a href="init.php?init=15&page=<?php echo $page_next; ?>">下一页 &rarr;</a>
+    </li>
+</ul>
+
+<!-- 编辑框 -->
+<div id="group_edit" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">编辑用户组</h3>
+    </div>
+    <div class="modal-body">
+        <div class="control-group">
+            <label class="control-label" for="edit_name">组名称</label>
+            <div class="controls">
+                <input type="text" id="edit_name" placeholder="组名称">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="edit_power">权限</label>
+            <div class="controls">
+                <select id="edit_power"><option value="admin">管理员</option><option value="normal">普通用户</option></select>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="edit_status">状态</label>
+            <div class="controls">
+                <select id="edit_status"><option value="1">启用</option><option value="0">禁用</option></select>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
+        <button href="#edit_save" class="btn btn-primary">保存修改</button>
     </div>
 </div>
-<h2>用户组列表</h2>
+
+<!-- Javascript -->
+<script>
+    $(document).ready(function(){
+        //添加按钮事件
+    $("button[href='#add']").click(function(){
+        $.post("ajax_user_group.php",{
+            "add_name":$("#add_name").val(),
+            "add_power":$("#add_power").val()
+        },function(data){
+            msg(data,"添加成功！","无法添加新的用户组，请检查您输入的用户组名称、权限是否正确！");
+            tourl(1500,"init.php?init=15");
+        });
+    });
+    
+    //删除按钮事件
+    $("button[class='btn btn-danger']").click(function(){
+        $("#group_list").data("del",$(this).parent().parent().parent().children().html());
+       $.get("ajax_user_group.php?del="+$("#group_list").data("del"),function(data){
+           msg(data,"删除成功！","无法删除该用户组，请确保系统至少存在一个用户组！");
+           if(data=="2"){
+               $("td:contains('"+$("#group_list").data("del")+"')").parent("tr").remove();
+           }
+       });
+    });
+    
+    //编辑按钮事件
+    $("button[href='#group_edit']").click(function(){
+        $("#group_edit").data("edit_id",$(this).parent().parent().parent().children().html());
+        $("#edit_name").val($(this).parent().parent().parent().children("td:eq(1)").html());
+        var power = $(this).parent().parent().parent().children("td:eq(2)").html();
+        if(power=="管理员"){
+            $("#edit_power").val("admin");
+        }else{
+            $("#edit_power").val("normal");
+        }
+        var status = $(this).parent().parent().parent().children("td:eq(3)").html();
+        if(status=="正常"){
+            $("#edit_status").val("1");
+        }else{
+            $("#edit_status").val("0");
+        }
+    });
+    
+    //编辑保存按钮事件
+    $("button[href='#edit_save']").click(function(){
+        $.post("ajax_user_group.php",{
+            "edit_id":$("#group_edit").data("edit_id"),
+            "edit_name":$("#edit_name").val(),
+            "edit_power":$("#edit_power").val(),
+            "edit_status":$("#edit_status").val()
+        },function(data){
+            msg(data,"修改成功！","无法修改用户组，请检查您输入的用户组名称或权限是否正确！");
+            if(data=="2"){
+                $("td:contains('"+$("#group_edit").data("edit_id")+"')").parent("tr").children("td:eq(1)").html($("#edit_name").val());
+                var power = $("#edit_power").val();
+                var power_str = "";
+                if(power=="admin"){
+                    power_str = "管理员";
+                }else{
+                    power_str = "普通用户";
+                }
+                $("td:contains('"+$("#group_edit").data("edit_id")+"')").parent("tr").children("td:eq(2)").html(power_str);
+                var status = $("#edit_status").val();
+                var status_str = "";
+                if(status=="1"){
+                    status_str = "正常";
+                }else{
+                    status_str = "已禁用";
+                }
+                $("td:contains('"+$("#group_edit").data("edit_id")+"')").parent("tr").children("td:eq(3)").html(status_str);
+            }
+        });
+        $("#group_edit").modal('hide');
+    });
+    });
+</script>
