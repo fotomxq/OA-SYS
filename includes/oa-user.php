@@ -3,7 +3,7 @@
 /**
  * 用户操作类
  * @author fotomxq <fotomxq.me>
- * @version 7
+ * @version 8
  * @package oa
  */
 class oauser {
@@ -169,7 +169,7 @@ class oauser {
      */
     public function view_user($id) {
         $return = false;
-        $sql = 'SELECT `id`,`user_username`,`user_password`,`user_email`,`user_name`,`user_group`,`user_date`,`user_login_date`,`user_ip`,`user_status` FROM `' . $this->table_name_user . '` WHERE `id`=:id';
+        $sql = 'SELECT `id`,`user_username`,`user_email`,`user_name`,`user_group`,`user_date`,`user_login_date`,`user_ip`,`user_status` FROM `' . $this->table_name_user . '` WHERE `id`=:id';
         $sth = $this->db->prepare($sql);
         $sth->bindParam(':id', $id, PDO::PARAM_INT | PDO::PARAM_INPUT_OUTPUT);
         if ($sth->execute() == true) {
@@ -288,17 +288,17 @@ class oauser {
 
     /**
      * 添加一个新用户
-     * @since 6
+     * @since 8
      * @param string $username 用户名
      * @param string $password 密码明文
      * @param string $email 邮箱
      * @param string $name 名字
      * @param int $group 用户组ID
      * @param int $ip_id IP ID
-     * @return boolean|int
+     * @return int
      */
     public function add_user($username, $password, $email, $name, $group, $ip_id) {
-        $return = false;
+        $return = 0;
         if ($this->check_username($username) == true && $this->check_password($password) == true && $this->check_email($email) == true && $this->check_name($name) == true && $this->check_int($group) == true) {
             //判断用户组是否存在
             $group_view = $this->view_group($group);
@@ -367,10 +367,10 @@ class oauser {
 
     /**
      * 修改用户
-     * @since 6
+     * @since 8
      * @param int $id 主键
      * @param string $username 用户名
-     * @param string $password 密码明文
+     * @param string $password 密码明文或null，留空则不修改
      * @param string $email 邮箱
      * @param string $name 昵称
      * @param int $group 用户组ID
@@ -378,17 +378,19 @@ class oauser {
      */
     public function edit_user($id, $username, $password, $email, $name, $group) {
         $return = false;
-        if ($this->check_int($id) == true && $this->check_username($username) == true && $this->check_password($password) == true && $this->check_email($email) == true && $this->check_name($name) && $this->check_int($group) == true) {
+        if ($this->check_int($id) == true && $this->check_username($username) == true && ($this->check_password($password) == true || $password == null) && $this->check_email($email) == true && $this->check_name($name) && $this->check_int($group) == true) {
             $group_view = $this->view_group($group);
             if ($group_view == false) {
                 return $return;
             }
-            $sql = 'UPDATE `' . $this->table_name_user . '` SET `user_username` = :username,`user_password` = :password,`user_email` = :email,`user_name` = :name,`user_group` = :group WHERE `id` = :id';
+            $sql_password = '';
+            if ($password != null) {
+                $sql_password = ',`user_password` = \'' . $this->get_password_sha1($password) . '\'';
+            }
+            $sql = 'UPDATE `' . $this->table_name_user . '` SET `user_username` = :username,`user_email` = :email,`user_name` = :name,`user_group` = :group' . $sql_password . ' WHERE `id` = :id';
             $sth = $this->db->prepare($sql);
             $sth->bindParam(':id', $id, PDO::PARAM_INT | PDO::PARAM_INPUT_OUTPUT);
             $sth->bindParam(':username', $username, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
-            $password = $this->get_password_sha1($password);
-            $sth->bindParam(':password', $password, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
             $sth->bindParam(':email', $email, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
             $sth->bindParam(':name', $name, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
             $sth->bindParam(':group', $group_view['id']);
@@ -396,7 +398,6 @@ class oauser {
                 $return = true;
             }
         }
-
         return $return;
     }
 
@@ -515,10 +516,10 @@ class oauser {
 
     /**
      * 获取session login变量
-     * @since 6
+     * @since 8
      * @return int
      */
-    private function get_session_login() {
+    public function get_session_login() {
         if (isset($_SESSION[$this->session_login_name]) == true) {
             return $_SESSION[$this->session_login_name];
         }

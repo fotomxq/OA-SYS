@@ -2,12 +2,12 @@
 /**
  * 登录后首页
  * @author fotomxq <fotomxq.me>
- * @version 4
+ * @version 5
  * @package oa
  */
 /**
  * 引入用户登陆检测模块(包含全局引用)
- * @since 2
+ * @since 5
  */
 require('logged.php');
 
@@ -18,6 +18,9 @@ require('logged.php');
 $init_page = 0;
 if (isset($_GET['init']) == true) {
     $init_page = $_GET['init'];
+    if($init_page > 10 && $logged_admin == false){
+        plugerror('noadmin');
+    }
 }
 $init_page_arr = array('center', 'message', 'disk_user', 'task_user', 'performance', 'diary', 'address_book', 'self', 'disk_share', 'task_center', 'message_board', 'message_center', 'system', 'backup', 'user', 'user_group');
 if (isset($init_page_arr[$init_page]) == false) {
@@ -43,10 +46,10 @@ if (isset($init_page_arr[$init_page]) == false) {
                 var id = "#msg";
                 if(data=="2"){
                     $(id).attr("class","alert alert-success");
-                    $(id).append(success);
+                    $(id).html("<p>"+success+"</p>");
                 }else{
                     $(id).attr("class","alert alert-error");
-                    $(id).append(error);
+                    $(id).html("<p>"+error+"</p>");
                 }
             }
             
@@ -55,6 +58,9 @@ if (isset($init_page_arr[$init_page]) == false) {
             function tourl(t,url){
                 t = setTimeout("window.location = '"+url+"'",t);
             }
+            
+            //IP地址
+            var ip_addr = "<?php echo $ip_arr['addr']; ?>";
         </script>
 
         <!-- Le styles -->
@@ -105,6 +111,7 @@ if (isset($init_page_arr[$init_page]) == false) {
                     <a class="brand" href="#"><?php echo $website_title; ?></a>
                     <div class="nav-collapse collapse">
                         <p class="navbar-text pull-right">
+                            欢迎您  <b><?php $hello_user = $oauser->view_user($oauser->get_session_login()); if($hello_user){ echo $hello_user['user_name']; } unset($hello_user); ?></b>  您的IP地址 : <?php echo $ip_arr['addr']; ?>  
                             <a href="logout.php" class="navbar-link"><i class="icon-off icon-white"></i> 退出登陆</a>
                         </p>
                         <ul class="nav">
@@ -129,6 +136,7 @@ if (isset($init_page_arr[$init_page]) == false) {
                                     <li><a href="init.php?init=10"><i class="icon-comment"></i> 公共留言薄</a></li>
                                 </ul>
                             </li>
+                            <?php if($logged_admin == true){ ?>
                             <li class="dropdown">
                                 <a  href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-wrench icon-white"></i> 系统<b class="caret"></b></a>
                                 <ul class="dropdown-menu">
@@ -139,6 +147,7 @@ if (isset($init_page_arr[$init_page]) == false) {
                                     <li><a href="init.php?init=15" target="_self"><i class="icon-th-large"></i> 用户组管理</a></li>
                                 </ul>
                             </li>
+                            <?php } ?>
                         </ul>
                     </div><!--/.nav-collapse -->
                 </div>
@@ -162,12 +171,14 @@ if (isset($init_page_arr[$init_page]) == false) {
                             <li><a href="init.php?init=8"><i class="icon-share"></i> 文件共享中心</a></li>
                             <li><a href="init.php?init=9"><i class="icon-tasks"></i> 生产任务中心</a></li>
                             <li><a href="init.php?init=10"><i class="icon-comment"></i> 公共留言薄</a></li>
+                            <?php if($logged_admin == true){ ?>
                             <li class="nav-header">系统</li>
                             <li><a href="init.php?init=11"><i class="icon-envelope"></i> 消息中心</a></li>
                             <li><a href="init.php?init=12"><i class="icon-asterisk"></i> 系统设置</a></li>
                             <li><a href="init.php?init=13"><i class="icon-random"></i> 备份和恢复</a></li>
                             <li><a href="init.php?init=14" target="_self"><i class="icon-user"></i> 用户管理</a></li>
                             <li><a href="init.php?init=15" target="_self"><i class="icon-th-large"></i> 用户组管理</a></li>
+                            <?php } ?>
                         </ul>
                     </div><!--/.well -->
                 </div><!--/span-->

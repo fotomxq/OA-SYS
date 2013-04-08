@@ -3,7 +3,7 @@
 /**
  * Ajax编辑用户组
  * @author fotomxq <fotomxq.me>
- * @version 1
+ * @version 2
  * @package oa
  */
 /**
@@ -35,15 +35,11 @@ if(isset($_POST['edit_id']) == true && isset($_POST['edit_name']) == true && iss
 }
 
 /**
- * 获取用户组列表记录数
- */
-$group_list_row = $oauser->get_group_row();
-
-/**
  * 删除用户组
  */
-if (isset($_GET['del']) == true) {
+if (isset($_GET['del']) == true && $_GET['del'] > 1) {
     //如果记录数大于1则删除
+    $group_list_row = $oauser->get_group_row();
     if ($group_list_row > 1) {
         if ($oauser->del_group($_GET['del'])) {
             die('2');

@@ -3,7 +3,7 @@
 /**
  * 登陆处理
  * @author fotomxq <fotomxq.me>
- * @version 3
+ * @version 4
  * @package oa
  */
 /**
@@ -17,12 +17,6 @@ require('glob.php');
  * @since 1
  */
 require(DIR_LIB . DS . 'oa-user.php');
-
-/**
- * 引入跳转URL模块
- * @since 3
- */
-require(DIR_LIB . DS . 'plug-tourl.php');
 
 /**
  * 检查变量存在并转移给user类

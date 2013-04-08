@@ -130,26 +130,30 @@ $group_list = $oauser->view_group_list($page);
     
     //删除按钮事件
     $("button[class='btn btn-danger']").click(function(){
-        $("#group_list").data("del",$(this).parent().parent().parent().children().html());
+        var ev = $(this).parent().parent().parent().children();
+        $("#group_list").data("del",$(ev).html());
        $.get("ajax_user_group.php?del="+$("#group_list").data("del"),function(data){
-           msg(data,"删除成功！","无法删除该用户组，请确保系统至少存在一个用户组！");
+           msg(data,"删除成功！","无法删除该用户组，请确保系统至少存在一个用户组，同时您不能删除系统默认组！");
            if(data=="2"){
-               $("td:contains('"+$("#group_list").data("del")+"')").parent("tr").remove();
+               $(ev).parent("tr").remove();
            }
        });
     });
     
     //编辑按钮事件
     $("button[href='#group_edit']").click(function(){
-        $("#group_edit").data("edit_id",$(this).parent().parent().parent().children().html());
-        $("#edit_name").val($(this).parent().parent().parent().children("td:eq(1)").html());
-        var power = $(this).parent().parent().parent().children("td:eq(2)").html();
+        var ev = $(this).parent().parent().parent();
+        $("#group_edit").data("edit_x",ev);
+        $("#group_edit").data("edit_id",$(ev).children().html());
+        $("#group_edit").data("edit_name",$(ev).children("td:eq(1)").html());
+        $("#edit_name").val($(ev).children("td:eq(1)").html());
+        var power = $(ev).children("td:eq(2)").html();
         if(power=="管理员"){
             $("#edit_power").val("admin");
         }else{
             $("#edit_power").val("normal");
         }
-        var status = $(this).parent().parent().parent().children("td:eq(3)").html();
+        var status = $(ev).children("td:eq(3)").html();
         if(status=="正常"){
             $("#edit_status").val("1");
         }else{
@@ -167,7 +171,8 @@ $group_list = $oauser->view_group_list($page);
         },function(data){
             msg(data,"修改成功！","无法修改用户组，请检查您输入的用户组名称或权限是否正确！");
             if(data=="2"){
-                $("td:contains('"+$("#group_edit").data("edit_id")+"')").parent("tr").children("td:eq(1)").html($("#edit_name").val());
+                var ev = $("#group_edit").data("edit_x");
+                $(ev).children("td:eq(1)").html($("#edit_name").val());
                 var power = $("#edit_power").val();
                 var power_str = "";
                 if(power=="admin"){
@@ -175,7 +180,7 @@ $group_list = $oauser->view_group_list($page);
                 }else{
                     power_str = "普通用户";
                 }
-                $("td:contains('"+$("#group_edit").data("edit_id")+"')").parent("tr").children("td:eq(2)").html(power_str);
+                $(ev).children("td:eq(2)").html(power_str);
                 var status = $("#edit_status").val();
                 var status_str = "";
                 if(status=="1"){
@@ -183,7 +188,7 @@ $group_list = $oauser->view_group_list($page);
                 }else{
                     status_str = "已禁用";
                 }
-                $("td:contains('"+$("#group_edit").data("edit_id")+"')").parent("tr").children("td:eq(3)").html(status_str);
+                $(ev).children("td:eq(3)").html(status_str);
             }
         });
         $("#group_edit").modal('hide');

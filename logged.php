@@ -4,7 +4,7 @@
  * 已登陆检测
  * <p>如果发现尚未登陆，则直接中断页面</p>
  * @author fotomxq <fotomxq.me>
- * @version 1
+ * @version 2
  * @package oa
  */
 /**
@@ -20,19 +20,26 @@ require('glob.php');
 require(DIR_LIB . DS . 'oa-user.php');
 
 /**
- * 引入跳转URL模块
- * @since 1
- */
-require(DIR_LIB . DS . 'plug-tourl.php');
-
-/**
  * 进行登陆检测
+ * @since 2
  */
 //读取用户超时配置
 $config_user_timeout = (int) $oaconfig->load('USER_TIMEOUT');
 $oauser = new oauser($db);
-if ($oauser->status($ip_arr['id'], $config_user_timeout) == false) {
-    //如果尚未登陆，则跳转到错误页面
-    plugtourl('error.php?e=logged');
+$logged_admin = false;
+if ($oauser->status($ip_arr['id'], $config_user_timeout) == true) {
+    $logged_user = $oauser->view_user($oauser->get_session_login());
+    if ($logged_user) {
+        $logged_group = $oauser->view_group($logged_user['user_group']);
+        if ($logged_group) {
+            if ($logged_group['group_power'] == 'admin') {
+                $logged_admin = true;
+            }
+        }
+    }
+} else {
+    //如果尚未登陆处理
+    plugerror('logged');
 }
+unset($config_user_timeout);
 ?>

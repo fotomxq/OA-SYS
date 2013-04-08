@@ -3,7 +3,7 @@
 /**
  * 全局设定
  * @author fotomxq <fotomxq.me>
- * @version 6
+ * @version 7
  * @package Core
  */
 /**
@@ -39,10 +39,17 @@ define('SYS_DEBUG', true);
 require(DIR_DATA . DS . 'configs' . DS . 'db.inc.php');
 
 /**
+ * 跳转模块
+ * @since 7
+ */
+require(DIR_LIB . DS . 'plug-tourl.php');
+
+/**
  * 引入错误处理模块
- * @since 3
+ * @since 7
  */
 require(DIR_LIB . DS . 'core-error.php');
+require(DIR_LIB . DS . 'plug-error.php');
 
 /**
  * 引入并初始化数据库连接<br/>

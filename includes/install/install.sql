@@ -118,7 +118,7 @@ CREATE TABLE IF NOT EXISTS `oa_user` (
   `user_username` varchar(20) COLLATE utf8_bin NOT NULL COMMENT '用户名',
   `user_password` char(41) COLLATE utf8_bin NOT NULL COMMENT '密码',
   `user_email` varchar(255) COLLATE utf8_bin NOT NULL COMMENT '邮箱',
-  `user_name` varchar(30) COLLATE utf8_bin NOT NULL COMMENT '匿名',
+  `user_name` varchar(60) COLLATE utf8_bin NOT NULL COMMENT '昵称',
   `user_group` bigint(20) unsigned NOT NULL COMMENT '用户组',
   `user_date` datetime NOT NULL COMMENT '创建时间',
   `user_login_date` datetime NOT NULL COMMENT '上一次登录时间',
@@ -129,13 +129,7 @@ CREATE TABLE IF NOT EXISTS `oa_user` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`),
   UNIQUE KEY `user_username` (`user_username`),
-  UNIQUE KEY `user_ip_3` (`user_ip`),
-  UNIQUE KEY `user_ip_4` (`user_ip`),
-  UNIQUE KEY `user_ip_5` (`user_ip`),
-  KEY `user_ip` (`user_ip`),
-  KEY `user_ip_2` (`user_ip`),
-  KEY `user_group` (`user_group`),
-  KEY `user_ip_6` (`user_ip`)
+  KEY `user_group` (`user_group`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=2 ;
 
 --
@@ -166,4 +160,5 @@ CREATE TABLE IF NOT EXISTS `oa_user_group` (
 --
 
 INSERT INTO `oa_user_group` (`id`, `group_name`, `group_power`, `group_status`) VALUES
-(1, 'admin', 'admin', 1);
+(1, '管理员组', 'admin', 1),
+(2, '普通用户组', 'normal', 1);
