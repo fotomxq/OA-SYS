@@ -3,17 +3,17 @@
 /**
  * 错误处理模块
  * @author fotomxq <fotomxq.me>
- * @version 3
+ * @version 4
  * @package Core
  */
 class coreerror {
 
     /**
      * 错误响应页面
-     * @since 1
+     * @since 4
      * @var string 
      */
-    public $error_page = 'error.php';
+    public static $error_page = 'error.php';
 
     /**
      * 错误日志记录开关

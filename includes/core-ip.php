@@ -3,7 +3,7 @@
 /**
  * IP操作类
  * @author fotomxq <fotomxq.me>
- * @version 3
+ * @version 4
  * @package core
  */
 class coreip {
@@ -39,6 +39,22 @@ class coreip {
         $this->locate_data_file = $locate_data_file;
         $this->db = $db;
         $this->table_name = $db->tables['ip'];
+    }
+
+    /**
+     * 查询IP ID
+     * @since 4
+     * @param int $id ID
+     * @return boolean|array
+     */
+    public function view($id) {
+        $sql = 'SELECT `id`,`ip_addr`,`ip_ban` FROM `' . $this->table_name . '` WHERE `id` = ?';
+        $sth = $this->db->prepare($sql);
+        $sth->bindParam(1, $id, PDO::PARAM_INT | PDO::PARAM_INPUT_OUTPUT);
+        if ($sth->execute() == true) {
+            return $sth->fetch(PDO::FETCH_ASSOC);
+        }
+        return false;
     }
 
     /**
