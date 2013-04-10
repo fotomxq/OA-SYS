@@ -2,7 +2,8 @@
 
 /**
  * POST类
- * <p>消息：post_type必须为message标识；post_user表示发布用户，为0表示系统通知；post_name表示接收用户，post_name为0表示全部用户接收；post_content表示消息内容，消息内容不能超过500字。</p>
+ * <p>消息：post_type必须为message标识；post_user表示发布用户；post_name表示接收用户，0表示全部用户接收；post_content表示消息内容，消息内容不能超过500字。</p>
+ * <p>通讯录：post_type必须为addressbook；post_user表示通讯录所属用户；post_parent表示所属子信息，0表示某人，非0表示该记录为子信息并指向post id；post_title表示子信息名称，如“电话号码”；post_content表示子信息内容，如电话号码“150xxx”；post_name表示该人存在用户，并指向该用户ID，如果不存在则为null。</p>
  * @author fotomxq <fotomxq.me>
  * @version 2
  * @package oa

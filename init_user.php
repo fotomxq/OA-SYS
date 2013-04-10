@@ -2,7 +2,7 @@
 /**
  * 用户页面
  * @author fotomxq <fotomxq.me>
- * @version 3
+ * @version 4
  * @package oa
  */
 if (isset($init_page) == false) {
@@ -51,14 +51,14 @@ $group_list = $oauser->view_group_list(1, 999, 0, true);
 <table class="table table-hover table-bordered table-striped">
     <thead>
         <tr>
-            <th>ID</th>
-            <th>用户名</th>
-            <th>昵称</th>
-            <th>邮箱</th>
-            <th>用户组</th>
-            <th>最后登录时间</th>
-            <th>最后登录IP</th>
-            <th>操作</th>
+            <th><i class="icon-th-list"></i> ID</th>
+            <th><i class="icon-user"></i> 用户名</th>
+            <th><i class="icon-tags"></i> 昵称</th>
+            <th><i class="icon-envelope"></i> 邮箱</th>
+            <th><i class="icon-th"></i> 用户组</th>
+            <th><i class="icon-time"></i> 最后登录时间</th>
+            <th><i class="icon-globe"></i> 最后登录IP</th>
+            <th><i class="icon-asterisk"></i> 操作</th>
         </tr>
     </thead>
     <tbody id="user_list">
@@ -76,18 +76,18 @@ $group_list = $oauser->view_group_list(1, 999, 0, true);
             <td><?php echo $v_group['group_name']; ?></td>
             <td><?php echo $v['user_login_date']; ?></td>
             <td><?php  echo $v_ip['ip_addr']; ?></td>
-            <td><div class="btn-group"><button href="#edit" role="button" class="btn" data-toggle="modal">编辑</button><button href="#del" class="btn btn-danger">删除</button></div></td>
+            <td><div class="btn-group"><button href="#edit" role="button" class="btn" data-toggle="modal"><i class="icon-pencil"></i> 编辑</button><button href="#del" class="btn btn-danger"><i class="icon-trash icon-white"></i> 删除</button></div></td>
         </tr>
         <?php } } ?>
         <tr class="info">
             <td></td>
-            <td><input type="text" class="input-small" id="add_username" placeholder="用户名"></td>
-            <td><input type="password"class="input-small" id="add_password" placeholder="密码"></td>
-            <td><input type="text" id="add_email" placeholder="@邮箱.com"></td>
-            <td><select id="add_group"><?php if($group_list){ foreach($group_list as $v){ ?><option value="<?php echo $v['id']; ?>"><?php echo $v['group_name']; ?></option><?php } } ?></select></td>
-            <td><input type="text" id="add_name" class="input-small" placeholder="昵称"></td>
+            <td><div class="input-prepend"><span class="add-on"><i class="icon-user"></i></span><input type="text" class="input-small" id="add_username" placeholder="用户名"></div></td>
+            <td><div class="input-prepend"><span class="add-on"><i class="icon-star"></i></span><input type="password"class="input-small" id="add_password" placeholder="密码"></div></td>
+            <td><div class="input-prepend"><span class="add-on"><i class="icon-envelope"></i></span><input type="text" id="add_email" placeholder="@邮箱.com"></div></td>
+            <td><div class="input-prepend"><span class="add-on"><i class="icon-th"></i></span><select id="add_group"><?php if($group_list){ foreach($group_list as $v){ ?><option value="<?php echo $v['id']; ?>"><?php echo $v['group_name']; ?></option><?php } } ?></select></div></td>
+            <td><div class="input-prepend"><span class="add-on">@</span><input type="text" id="add_name" class="input-small" placeholder="昵称"></div></td>
             <td><?php  echo $ip_arr['addr']; ?></td>
-            <td><button href="#add" type="submit" class="btn btn-success" type="button">添加</button></td>
+            <td><button href="#add" type="submit" class="btn btn-success" type="button"><i class="icon-plus icon-white"></i> 添加</button></td>
         </tr>
     </tbody>
 </table>
@@ -112,37 +112,51 @@ $group_list = $oauser->view_group_list(1, 999, 0, true);
         <div class="control-group">
             <label class="control-label" for="edit_username">用户名</label>
             <div class="controls">
-                <input type="text" id="edit_username" placeholder="用户名">
+                <div class="input-prepend">
+                    <span class="add-on"><i class="icon-user"></i></span>
+                    <input type="text" id="edit_username" placeholder="用户名">
+                </div>
             </div>
         </div>
         <div class="control-group">
             <label class="control-label" for="edit_password">密码</label>
             <div class="controls">
-                <input type="password" id="edit_password" placeholder="密码">
+                <div class="input-prepend">
+                    <span class="add-on"><i class="icon-star"></i></span>
+                    <input type="password" id="edit_password" placeholder="密码">
+                </div>
             </div>
         </div>
         <div class="control-group">
             <label class="control-label" for="edit_name">昵称</label>
             <div class="controls">
-                <input type="text" id="edit_name" placeholder="昵称">
+                <div class="input-prepend">
+                    <span class="add-on">@</span>
+                    <input type="text" id="edit_name" placeholder="昵称">
             </div>
         </div>
         <div class="control-group">
             <label class="control-label" for="edit_email">邮箱</label>
             <div class="controls">
-                <input type="text" id="edit_email" placeholder="@邮箱.com">
+                <div class="input-prepend">
+                    <span class="add-on"><i class="icon-envelope"></i></span>
+                    <input type="text" id="edit_email" placeholder="@邮箱.com">
+                </div>
             </div>
         </div>
         <div class="control-group">
             <label class="control-label" for="edit_group">用户组</label>
             <div class="controls">
-                <select id="edit_group"><?php if($group_list){ foreach($group_list as $v){ ?><option value="<?php echo $v['id']; ?>"><?php echo $v['group_name']; ?></option><?php } } ?></select>
+                <div class="input-prepend">
+                    <span class="add-on"><i class="icon-th"></i></span>
+                    <select id="edit_group"><?php if($group_list){ foreach($group_list as $v){ ?><option value="<?php echo $v['id']; ?>"><?php echo $v['group_name']; ?></option><?php } } ?></select>
+                </div>
             </div>
         </div>
     </div>
     <div class="modal-footer">
-        <button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
-        <button href="#edit_save" class="btn btn-primary">保存修改</button>
+        <button class="btn" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i> 关闭</button>
+        <button href="#edit_save" class="btn btn-primary"><i class="icon-ok icon-white"></i> 保存修改</button>
     </div>
 </div>
 

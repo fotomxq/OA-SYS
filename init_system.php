@@ -2,7 +2,7 @@
 /**
  * 系统设置中心
  * @author fotomxq <fotomxq.me>
- * @version 1
+ * @version 2
  * @package oa
  */
 if (isset($init_page) == false) {
@@ -72,15 +72,22 @@ if(isset($_GET['return']) == true){
     <div class="control-group">
         <label class="control-label" for="config_web_title">网站标题，不能为空或大于150字</label>
         <div class="controls">
-            <input type="text" id="config_web_title" name="config_web_title" placeholder="网站标题" value="<?php echo $oaconfig->load('WEB_TITLE'); ?>">
+            <div class="input-prepend">
+                <span class="add-on"><i class="icon-edit"></i></span>
+                <input type="text" id="config_web_title" name="config_web_title" placeholder="网站标题" value="<?php echo $oaconfig->load('WEB_TITLE'); ?>">
+            </div>
         </div>
         <label class="control-label" for="config_user_timeout">用户登录超时时间(秒)，范围必须在120~999999秒之间</label>
         <div class="controls">
-            <input type="text" id="config_user_timeout" name="config_user_timeout" placeholder="用户登录超时时间(秒)" value="<?php echo $oaconfig->load('USER_TIMEOUT'); ?>">
+            <div class="input-prepend">
+                <span class="add-on"><i class="icon-time"></i></span>
+                <input type="text" id="config_user_timeout" name="config_user_timeout" placeholder="用户登录超时时间(秒)" value="<?php echo $oaconfig->load('USER_TIMEOUT'); ?>">
+            </div>
         </div>
         <div>
-            <button type="submit" class="btn btn-primary">修改设置</button>
-            <a href="init.php?init=12&return=1" class="btn btn-warning">还原系统设置</a>
+            <p>&nbsp;</p>
+            <button type="submit" class="btn btn-primary"><i class="icon-ok icon-white"></i> 修改设置</button>
+            <a href="init.php?init=12&return=1" class="btn btn-warning"><i class="icon-repeat icon-white"></i> 还原系统设置</a>
         </div>
     </div>
 </form>

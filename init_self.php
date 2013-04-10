@@ -2,7 +2,7 @@
 /**
  * 修改个人信息页面
  * @author fotomxq <fotomxq.me>
- * @version 3
+ * @version 4
  * @package oa
  */
 if (isset($init_page) == false) {
@@ -46,26 +46,47 @@ if (!$self_user) {
     <div class="control-group">
         <label class="control-label" for="edit_email">邮箱</label>
         <div class="controls">
-            <input type="text" id="edit_email" name="edit_email" placeholder="@邮箱.com" value="<?php echo $self_user['user_email']; ?>">
+            <div class="input-prepend">
+                <span class="add-on"><i class="icon-envelope"></i></span>
+                <input type="text" id="edit_email" name="edit_email" placeholder="@邮箱.com" value="<?php echo $self_user['user_email']; ?>">
+            </div>
         </div>
     </div>
     <div class="control-group">
         <label class="control-label" for="edit_name">昵称</label>
         <div class="controls">
-            <input type="text" id="edit_name" name="edit_name" placeholder="昵称" value="<?php echo $self_user['user_name']; ?>">
+            <div class="input-prepend">
+                <span class="add-on">@</span>
+                <input type="text" id="edit_name" name="edit_name" placeholder="昵称" value="<?php echo $self_user['user_name']; ?>">
+            </div>
         </div>
     </div>
     <div class="control-group">
         <label class="control-label" for="edit_password">修改登录密码（不修改则留空）</label>
         <div class="controls">
-            <p><input type="password" id="edit_password" name="edit_password" placeholder="当前密码"></p>
-            <p><input type="password" id="edit_new_password" name="edit_new_password" placeholder="新密码"></p>
-            <p><input type="password" id="edit_new_password2" name="edit_new_password2" placeholder="新密码确认"></p>
+            <p>
+                <div class="input-prepend">
+                    <span class="add-on"><i class="icon-star"></i></span>
+                    <input type="password" id="edit_password" name="edit_password" placeholder="当前密码">
+                </div>
+            </p>
+            <p>
+                <div class="input-prepend">
+                    <span class="add-on"><i class="icon-star"></i></span>
+                    <input type="password" id="edit_new_password" name="edit_new_password" placeholder="新密码">
+                </div>
+            </p>
+            <p>
+                <div class="input-prepend">
+                    <span class="add-on"><i class="icon-star"></i></span>
+                    <input type="password" id="edit_new_password2" name="edit_new_password2" placeholder="新密码确认">
+                </div>
+            </p>
         </div>
     </div>
     <div>
-        <button type="submit" class="btn btn-primary">修改</button>
-        <button href="#return" type="button" class="btn">重置</button>
+        <button type="submit" class="btn btn-primary"><i class="icon-ok icon-white"></i> 修改</button>
+        <button href="#return" type="button" class="btn"><i class="icon-refresh"></i> 重置</button>
     </div>
 </form>
 
