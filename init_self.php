@@ -2,7 +2,7 @@
 /**
  * 修改个人信息页面
  * @author fotomxq <fotomxq.me>
- * @version 1
+ * @version 2
  * @package oa
  */
 /**
@@ -36,6 +36,7 @@ if (!$self_user) {
     plugerror('selferror');
 }
 ?>
+<!-- 管理表格 -->
 <h2>修改个人信息</h2>
 <form action="init.php?init=7" method="post" class="form-actions">
     <div class="control-group">
@@ -63,6 +64,8 @@ if (!$self_user) {
         <button href="#return" type="button" class="btn">重置</button>
     </div>
 </form>
+
+<!-- script -->
 <script>
     $(document).ready(function() {
         //默认值

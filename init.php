@@ -2,7 +2,7 @@
 /**
  * 登录后首页
  * @author fotomxq <fotomxq.me>
- * @version 5
+ * @version 6
  * @package oa
  */
 /**
@@ -10,6 +10,13 @@
  * @since 5
  */
 require('logged.php');
+
+/**
+ * 获取当前页面URL
+ * @since 6
+ */
+require(DIR_LIB . DS . 'plug-geturl.php');
+$url = pluggeturl();
 
 /**
  * 定义页面指向

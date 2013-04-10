@@ -94,7 +94,7 @@ CREATE TABLE IF NOT EXISTS `oa_posts` (
   `post_order` int(11) NOT NULL DEFAULT '0' COMMENT '排序',
   `post_parent` bigint(20) unsigned NOT NULL COMMENT '上一级ID',
   `post_user` bigint(20) unsigned DEFAULT NULL COMMENT '用户ID',
-  `post_password` char(41) COLLATE utf8_bin NOT NULL COMMENT '访问密码',
+  `post_password` char(41) COLLATE utf8_bin DEFAULT NULL COMMENT '访问密码',
   `post_name` varchar(300) COLLATE utf8_bin DEFAULT NULL COMMENT '媒体文件名称',
   `post_url` varchar(500) COLLATE utf8_bin DEFAULT NULL COMMENT '多媒体文件路径',
   `post_status` varchar(30) COLLATE utf8_bin NOT NULL DEFAULT 'public' COMMENT '发布状态',

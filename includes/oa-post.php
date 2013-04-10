@@ -2,11 +2,19 @@
 
 /**
  * POST类
+ * <p>消息：post_type必须为message标识；post_user表示发布用户，为0表示系统通知；post_name表示接收用户，post_name为0表示全部用户接收；post_content表示消息内容，消息内容不能超过500字。</p>
  * @author fotomxq <fotomxq.me>
- * @version 1
+ * @version 2
  * @package oa
  */
 class oapost {
+
+    /**
+     * Type标识组
+     * @since 2
+     * @var array 
+     */
+    private $type_values = array('message' => 'message', 'text' => 'text');
 
     /**
      * 表名称
@@ -64,6 +72,7 @@ class oapost {
      * @return boolean
      */
     public function view_list($user = null, $title = null, $content = null, $status = 'public', $type = 'text', $page = 1, $max = 10, $sort = 7, $desc = true) {
+        $return = false;
         $sql_where = '';
         if ($title) {
             $title = '%' . $title . '%';
@@ -74,11 +83,13 @@ class oapost {
             $sql_where .= ' OR `post_content`=:content';
         }
         if ($sql_where) {
-            $sql_where = substr($sql_where, 4);
+            $sql_where = '('.substr($sql_where, 4).') AND';
+        }
+        if($user){
+            $sql_where = $sql_where.' `post_user`=:user AND';
         }
         $sql_desc = $desc ? 'DESC' : 'ASC';
-        $sql = 'SELECT `' . implode('`,`', $this->fields) . '` FROM `' . $this->table_name . '` WHERE ' . $sql_where . ' AND `post_status`=:status AND `post_user`=:user AND `post_type`=:type ORDER BY ' . $this->fields[$sort] . ',' . $this->fields[0] . ' ' . $sql_desc . ' LIMIT ' . ($page - 1) * $max . ',' . $max;
-        ;
+        $sql = 'SELECT `id`,`post_title`,`post_date`,`post_modified`,`post_ip`,`post_type`,`post_order`,`post_parent`,`post_user`,`post_password`,`post_name`,`post_url`,`post_status`,`post_meta` FROM `' . $this->table_name . '` WHERE ' . $sql_where . ' `post_status`=:status AND `post_type`=:type ORDER BY ' . $this->fields[$sort] . ' ' . $sql_desc . ' LIMIT ' . ($page - 1) * $max . ',' . $max;
         $sth = $this->db->prepare($sql);
         if ($title) {
             $sth->bindParam(':title', $title, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
@@ -86,13 +97,16 @@ class oapost {
         if ($content) {
             $sth->bindParam(':content', $content, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
         }
-        $sth->bindParam(':user', $user, PDO::PARAM_INT | PDO::PARAM_INPUT_OUTPUT);
+        if($user){
+            $sth->bindParam(':user', $user, PDO::PARAM_INT | PDO::PARAM_INPUT_OUTPUT);
+        }
         $sth->bindParam(':status', $status, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
+        $type = $this->get_type($type);
         $sth->bindParam(':type', $type, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
         if ($sth->execute() == true) {
             $return = $sth->fetchAll(PDO::FETCH_ASSOC);
         }
-        return false;
+        return $return;
     }
 
     /**
@@ -106,6 +120,7 @@ class oapost {
      * @return boolean
      */
     public function view_list_row($user = null, $title = null, $content = null, $status = 'public', $type = 'text') {
+        $return = false;
         $sql_where = '';
         if ($title) {
             $title = '%' . $title . '%';
@@ -116,9 +131,12 @@ class oapost {
             $sql_where .= ' OR `post_content`=:content';
         }
         if ($sql_where) {
-            $sql_where = substr($sql_where, 4);
+            $sql_where = '('.substr($sql_where, 4).') AND';
         }
-        $sql = 'SELECT COUNT(id) FROM `' . $this->table_name . '` WHERE ' . $sql_where . ' AND `post_status`=:status AND `post_user`=:user AND `post_type`=:type';
+        if($user){
+            $sql_where = $sql_where.' `post_user`=:user AND';
+        }
+        $sql = 'SELECT COUNT(id) FROM `' . $this->table_name . '` WHERE ' . $sql_where . ' `post_status`=:status AND `post_type`=:type';
         $sth = $this->db->prepare($sql);
         if ($title) {
             $sth->bindParam(':title', $title, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
@@ -126,13 +144,16 @@ class oapost {
         if ($content) {
             $sth->bindParam(':content', $content, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
         }
-        $sth->bindParam(':user', $user, PDO::PARAM_INT | PDO::PARAM_INPUT_OUTPUT);
+        if($user){
+            $sth->bindParam(':user', $user, PDO::PARAM_INT | PDO::PARAM_INPUT_OUTPUT);
+        }
         $sth->bindParam(':status', $status, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
+        $type = $this->get_type($type);
         $sth->bindParam(':type', $type, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
         if ($sth->execute() == true) {
             $return = $sth->fetchColumn();
         }
-        return false;
+        return $return;
     }
 
     /**
@@ -143,7 +164,7 @@ class oapost {
      */
     public function view($id) {
         $return = false;
-        if ($this->check_int($int) == false) {
+        if ($this->check_int($id) == false) {
             return $return;
         }
         $sql = 'SELECT `' . implode('`,`', $this->fields) . '` FROM `' . $this->table_name . '` WHERE `id` = :id';
@@ -172,18 +193,21 @@ class oapost {
      */
     public function add($title, $content, $type, $parent, $user, $pw, $name, $url, $status, $meta) {
         $return = 0;
-        $sql = 'INSERT INTO `' . $this->table_name . '`(`' . implode('`,`', $this->fields) . '`) VALUES(NULL,:title,:content,NOW(),NULL,:ip,:type,:parent,:user,:pw,:name,:url,:status,:meta)';
+        $sql = 'INSERT INTO `' . $this->table_name . '`(`post_title`,`post_content`,`post_date`,`post_ip`,`post_type`,`post_order`,`post_parent`,`post_user`,`post_password`,`post_name`,`post_url`,`post_meta`) VALUES(:title,:content,NOW(),:ip,:type,0,:parent,:user,:pw,:name,:url,:meta)';
         $sth = $this->db->prepare($sql);
         $sth->bindParam(':title', $title, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
         $sth->bindParam(':content', $content, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
         $sth->bindParam(':ip', $this->ip_id, PDO::PARAM_INT);
+        $type = $this->get_type($type);
         $sth->bindParam(':type', $type, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
         $sth->bindParam(':parent', $parent, PDO::PARAM_INT | PDO::PARAM_INPUT_OUTPUT);
         $sth->bindParam(':user', $user, PDO::PARAM_INT | PDO::PARAM_INPUT_OUTPUT);
-        $sth->bindParam(':pw', sha1($pw), PDO::PARAM_STR);
+        if ($pw != null) {
+            $pw = sha1($pw);
+        }
+        $sth->bindParam(':pw', $pw, PDO::PARAM_STR);
         $sth->bindParam(':name', $name, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
         $sth->bindParam(':url', $url, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
-        $sth->bindParam(':status', $status, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
         $sth->bindParam(':meta', $meta, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
         if ($sth->execute() == true) {
             $return = $this->db->lastInsertId();
@@ -213,10 +237,14 @@ class oapost {
         $sth = $this->db->prepare($sql);
         $sth->bindParam(':title', $title, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
         $sth->bindParam(':content', $content, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
+        $type = $this->get_type($type);
         $sth->bindParam(':type', $type, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
         $sth->bindParam(':parent', $parent, PDO::PARAM_INT | PDO::PARAM_INPUT_OUTPUT);
         $sth->bindParam(':user', $user, PDO::PARAM_INT | PDO::PARAM_INPUT_OUTPUT);
-        $sth->bindParam(':pw', sha1($pw), PDO::PARAM_STR);
+        if ($pw != null) {
+            $pw = sha1($pw);
+        }
+        $sth->bindParam(':pw', $pw, PDO::PARAM_STR);
         $sth->bindParam(':name', $name, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
         $sth->bindParam(':url', $url, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
         $sth->bindParam(':status', $status, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
@@ -230,12 +258,12 @@ class oapost {
 
     /**
      * 删除post
-     * @since 1
+     * @since 2
      * @param int $id 主键
      * @return boolean
      */
     public function del($id) {
-        if ($this->check_int($int) == false) {
+        if ($this->check_int($id) == false) {
             return false;
         }
         $sql = 'DELETE FROM `' . $this->table_name . '` WHERE `id` = :id';
@@ -252,6 +280,16 @@ class oapost {
      */
     private function check_int($int) {
         return filter_var($int, FILTER_VALIDATE_INT);
+    }
+
+    /**
+     * 获取类型标识
+     * @since 2
+     * @param string $type
+     * @return string
+     */
+    private function get_type($type) {
+        return $this->type_values[$type];
     }
 
 }
