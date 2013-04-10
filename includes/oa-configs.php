@@ -3,7 +3,7 @@
 /**
  * 配置信息操作类
  * @author fotomxq <fotomxq.me>
- * @version 4
+ * @version 5
  * @package OA
  */
 class oaconfigs {
@@ -55,7 +55,7 @@ class oaconfigs {
 
     /**
      * 保存配置值
-     * @since 1
+     * @since 5
      * @param string $config_name 配置名称
      * @param string $config_value 配置值
      * @return boolean
@@ -63,8 +63,8 @@ class oaconfigs {
     public function save($config_name, $config_value) {
         $sql = 'UPDATE `' . $this->table_name . '` SET `config_value` = ? WHERE `config_name` = ?';
         $st = $this->db->prepare($sql);
-        $st->bindParam(1, $config_name, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
-        $st->bindParam(2, $config_value, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
+        $st->bindParam(1, $config_value, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
+        $st->bindParam(2, $config_name, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
         return $st->execute();
     }
 

@@ -2,9 +2,13 @@
 /**
  * 修改个人信息页面
  * @author fotomxq <fotomxq.me>
- * @version 2
+ * @version 3
  * @package oa
  */
+if (isset($init_page) == false) {
+    die();
+}
+
 /**
  * 获取用户信息
  */

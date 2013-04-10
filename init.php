@@ -2,7 +2,7 @@
 /**
  * 登录后首页
  * @author fotomxq <fotomxq.me>
- * @version 6
+ * @version 7
  * @package oa
  */
 /**
@@ -48,7 +48,7 @@ if (isset($init_page_arr[$init_page]) == false) {
         <script src="includes/js/jquery.js"></script>
         <script src="includes/js/bootstrap.js"></script>
         <script>
-            //消息函数
+            //ajax消息函数
             function msg(data,success,error){
                 var id = "#msg";
                 if(data=="2"){

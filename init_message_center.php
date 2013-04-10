@@ -2,9 +2,13 @@
 /**
  * 消息中心页面
  * @author fotomxq <fotomxq.me>
- * @version 1
+ * @version 2
  * @package oa
  */
+if (isset($init_page) == false) {
+    die();
+}
+
 /**
  * 引入post类
  */
@@ -19,6 +23,7 @@ $oapost = new oapost($db, $ip_arr['id']);
  * 操作消息内容
  */
 $message = '';
+$message_bool = false;
 
 /**
  * 添加新的消息
@@ -34,8 +39,10 @@ if (isset($_POST['new_message']) == true) {
     }
     if($oapost->add($title, $_POST['new_message'], 'message', 0, $oauser->get_session_login(), null, null, null, 'public', null)){
         $message = '添加通知成功！';
+        $message_bool = true;
     }else{
         $message = '无法添加新的通知。';
+        $message_bool = false;
     }
 }
 
@@ -53,8 +60,10 @@ if (isset($_POST['edit_id']) == true && isset($_POST['edit_message']) == true) {
     }
     if($oapost->edit($_POST['edit_id'], $title, $_POST['edit_message'], 'message', 0, $oauser->get_session_login(), null, null, null, 'public', null)){
         $message = '编辑通知成功！';
+        $message_bool = true;
     }else{
         $message = '无法修改通知，请稍候重试。';
+        $message_bool = false;
     }
 }
 
@@ -64,8 +73,10 @@ if (isset($_POST['edit_id']) == true && isset($_POST['edit_message']) == true) {
 if (isset($_GET['del']) == true) {
     if($oapost->del($_GET['del'])){
         $message = '删除通知成功！';
+        $message_bool = true;
     }else{
         $message = '无法删除该通知。';
+        $message_bool = false;
     }
 }
 
@@ -194,3 +205,14 @@ if (isset($_GET['edit']) == true) {
     }
 }
 ?>
+
+        <!-- Javascript -->
+        <script>
+            $(document).ready(function(){
+                var message = "<?php echo $message; ?>";
+                var message_bool = "<?php echo $message_bool ? '2' : '1'; ?>";
+                if(message != ""){
+                    msg(message_bool,message,message);
+                }
+            });
+        </script>
