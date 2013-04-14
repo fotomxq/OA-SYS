@@ -2,20 +2,23 @@
 
 /**
  * POST类
- * <p>消息：post_type必须为message标识；post_user表示发布用户；post_name表示接收用户，0表示全部用户接收；post_content表示消息内容，消息内容不能超过500字。</p>
- * <p>通讯录：post_type必须为addressbook；post_user表示通讯录所属用户；post_parent表示所属子信息，0表示某人，非0表示该记录为子信息并指向post id；post_title表示子信息名称，如“电话号码”；post_content表示子信息内容，如电话号码“150xxx”；post_name表示该人存在用户，并指向该用户ID，如果不存在则为null。</p>
+ * <p>* 消息：post_type必须为message标识；post_user表示发布用户；post_name表示接收用户，0表示系统消息；post_content表示消息内容，消息内容不能超过500字。</p>
+ * <p>  消息示例(用户间)：ID=1,post_type=message,post_user=1,post_name=2,post_content='你好，张三'</p>
+ * <p>* 通讯录：post_type必须为addressbook；post_user表示通讯录所属用户；post_parent表示所属子信息，0表示某人，非0表示该记录为子信息并指向post id；post_title表示联系人姓名或子信息名称，如“电话号码”；post_content表示子信息内容，如电话号码“150xxx”；post_name表示该人存在用户，并指向该用户ID，如果不存在则为null。</p>
+ * <p>   通讯录记录示例(联系人)：ID=1,post_type='addressbook',post_user=1,post_parent=0,post_title='张三',post_content=null,post_name=1</p>
+ * <p>   (联系人信息)：ID=2,post_type='addressbook',post_user=1,post_parent=1,post_title='联系电话',post_content='15003540000',post_name=null</p>
  * @author fotomxq <fotomxq.me>
- * @version 2
+ * @version 3
  * @package oa
  */
 class oapost {
 
     /**
      * Type标识组
-     * @since 2
+     * @since 3
      * @var array 
      */
-    private $type_values = array('message' => 'message', 'text' => 'text');
+    private $type_values = array('message' => 'message', 'text' => 'text', 'addressbook' => 'addressbook');
 
     /**
      * 表名称
@@ -60,7 +63,7 @@ class oapost {
 
     /**
      * 查询列表
-     * @since 1
+     * @since 3
      * @param string $user 用户ID
      * @param string $title 搜索标题
      * @param string $content 搜索内容
@@ -70,9 +73,10 @@ class oapost {
      * @param int $max 页长
      * @param int $sort 排序字段键值
      * @param boolean $desc 是否倒序
+     * @param int $parent 上一级ID
      * @return boolean
      */
-    public function view_list($user = null, $title = null, $content = null, $status = 'public', $type = 'text', $page = 1, $max = 10, $sort = 7, $desc = true) {
+    public function view_list($user = null, $title = null, $content = null, $status = 'public', $type = 'text', $page = 1, $max = 10, $sort = 7, $desc = true, $parent = null) {
         $return = false;
         $sql_where = '';
         if ($title) {
@@ -84,10 +88,13 @@ class oapost {
             $sql_where .= ' OR `post_content`=:content';
         }
         if ($sql_where) {
-            $sql_where = '('.substr($sql_where, 4).') AND';
+            $sql_where = '(' . substr($sql_where, 4) . ') AND';
         }
-        if($user){
-            $sql_where = $sql_where.' `post_user`=:user AND';
+        if ($user) {
+            $sql_where = $sql_where . ' `post_user`=:user AND';
+        }
+        if ($parent !== null) {
+            $sql_where = $sql_where . ' `post_parent`=:parent AND';
         }
         $sql_desc = $desc ? 'DESC' : 'ASC';
         $sql = 'SELECT `id`,`post_title`,`post_date`,`post_modified`,`post_ip`,`post_type`,`post_order`,`post_parent`,`post_user`,`post_password`,`post_name`,`post_url`,`post_status`,`post_meta` FROM `' . $this->table_name . '` WHERE ' . $sql_where . ' `post_status`=:status AND `post_type`=:type ORDER BY ' . $this->fields[$sort] . ' ' . $sql_desc . ' LIMIT ' . ($page - 1) * $max . ',' . $max;
@@ -98,8 +105,11 @@ class oapost {
         if ($content) {
             $sth->bindParam(':content', $content, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
         }
-        if($user){
+        if ($user) {
             $sth->bindParam(':user', $user, PDO::PARAM_INT | PDO::PARAM_INPUT_OUTPUT);
+        }
+        if ($parent !== null) {
+            $sth->bindParam(':parent', $parent, PDO::PARAM_INT | PDO::PARAM_INPUT_OUTPUT);
         }
         $sth->bindParam(':status', $status, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
         $type = $this->get_type($type);
@@ -112,7 +122,7 @@ class oapost {
 
     /**
      * 获取条件下的记录数
-     * @since 1
+     * @since 3
      * @param string $user 用户ID
      * @param string $title 搜索标题
      * @param string $content 搜索内容
@@ -120,7 +130,7 @@ class oapost {
      * @param string $type 识别类型 text|picture|file
      * @return boolean
      */
-    public function view_list_row($user = null, $title = null, $content = null, $status = 'public', $type = 'text') {
+    public function view_list_row($user = null, $title = null, $content = null, $status = 'public', $type = 'text',$parent=null) {
         $return = false;
         $sql_where = '';
         if ($title) {
@@ -137,6 +147,9 @@ class oapost {
         if($user){
             $sql_where = $sql_where.' `post_user`=:user AND';
         }
+        if ($parent != null) {
+            $sql_where = $sql_where . ' `post_parent`=:parent AND';
+        }
         $sql = 'SELECT COUNT(id) FROM `' . $this->table_name . '` WHERE ' . $sql_where . ' `post_status`=:status AND `post_type`=:type';
         $sth = $this->db->prepare($sql);
         if ($title) {
@@ -147,6 +160,9 @@ class oapost {
         }
         if($user){
             $sth->bindParam(':user', $user, PDO::PARAM_INT | PDO::PARAM_INPUT_OUTPUT);
+        }
+        if ($parent != null) {
+            $sth->bindParam(':parent', $parent, PDO::PARAM_INT | PDO::PARAM_INPUT_OUTPUT);
         }
         $sth->bindParam(':status', $status, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
         $type = $this->get_type($type);
@@ -271,6 +287,32 @@ class oapost {
         $sth = $this->db->prepare($sql);
         $sth->bindParam(':id', $id, PDO::PARAM_INT | PDO::PARAM_INPUT_OUTPUT);
         return $sth->execute();
+    }
+
+    /**
+     * 删除上一级ID的所有子ID
+     * @since 3
+     * @param int $id ID
+     * @return boolean
+     */
+    public function del_parent($id) {
+        $return = false;
+        $sql = 'SELECT `id` FROM `' . $this->table_name . '` WHERE `post_parent` = :id';
+        $sth = $this->db->prepare($sql);
+        $sth->bindParam(':id', $id, PDO::PARAM_INT | PDO::PARAM_INPUT_OUTPUT);
+        if ($sth->execute() == true) {
+            $res = $sth->fetchAll(PDO::FETCH_ASSOC);
+            if ($res) {
+                foreach ($res as $v) {
+                    $this->del_parent($v['id']);
+                }
+            }
+            $sql_delete = 'DELETE FROM `' . $this->table_name . '` WHERE `id` = :id';
+            $sth_delete = $this->db->prepare($sql_delete);
+            $sth_delete->bindParam(':id', $id, PDO::PARAM_INT | PDO::PARAM_INPUT_OUTPUT);
+            $return = $sth_delete->execute();
+        }
+        return $return;
     }
 
     /**

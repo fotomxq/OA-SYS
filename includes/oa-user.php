@@ -3,7 +3,7 @@
 /**
  * 用户操作类
  * @author fotomxq <fotomxq.me>
- * @version 8
+ * @version 9
  * @package oa
  */
 class oauser {
@@ -172,6 +172,23 @@ class oauser {
         $sql = 'SELECT `id`,`user_username`,`user_email`,`user_name`,`user_group`,`user_date`,`user_login_date`,`user_ip`,`user_status` FROM `' . $this->table_name_user . '` WHERE `id`=:id';
         $sth = $this->db->prepare($sql);
         $sth->bindParam(':id', $id, PDO::PARAM_INT | PDO::PARAM_INPUT_OUTPUT);
+        if ($sth->execute() == true) {
+            $return = $sth->fetch(PDO::FETCH_ASSOC);
+        }
+        return $return;
+    }
+
+    /**
+     * 根据用户名查找用户
+     * @since 9
+     * @param string $username 用户名
+     * @return array|boolean
+     */
+    public function view_user_name($username) {
+        $return = false;
+        $sql = 'SELECT `id`,`user_username`,`user_email`,`user_name`,`user_group`,`user_date`,`user_login_date`,`user_ip`,`user_status` FROM `' . $this->table_name_user . '` WHERE `user_username`=:name';
+        $sth = $this->db->prepare($sql);
+        $sth->bindParam(':name', $username, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
         if ($sth->execute() == true) {
             $return = $sth->fetch(PDO::FETCH_ASSOC);
         }
