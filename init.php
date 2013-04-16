@@ -2,7 +2,7 @@
 /**
  * 登录后首页
  * @author fotomxq <fotomxq.me>
- * @version 7
+ * @version 8
  * @package oa
  */
 /**
@@ -33,6 +33,12 @@ $init_page_arr = array('center', 'message', 'disk_user', 'task_user', 'performan
 if (isset($init_page_arr[$init_page]) == false) {
     $init_page = 0;
 }
+
+/**
+ * 初始化页面URL
+ * @since 8
+ */
+$page_url = 'init.php?init=' . $init_page;
 ?>
 
 <!DOCTYPE html>

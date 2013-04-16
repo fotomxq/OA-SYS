@@ -2,16 +2,12 @@
 /**
  * 通讯录页面
  * @author fotomxq <fotomxq.me>
- * @version 1
+ * @version 3
  * @package oa
  */
 if (isset($init_page) == false) {
     die();
 }
-/**
- * 初始化页面URL
- */
-$page_url = 'init.php?init=' . $init_page;
 
 /**
  * 引入post类并创建实例
@@ -127,12 +123,17 @@ if (isset($_POST['edit_id']) == true && isset($_POST['edit_title']) == true) {
  * @since 1
  */
 if (isset($_GET['del']) == true) {
-    if ($oapost->del_parent($_GET['del'])) {
-        $message = '删除联系人成功！';
-        $message_bool = true;
-    } else {
-        $message = '无法删除该联系人。';
-        $message_bool = false;
+    $del_view = $oapost->view($_GET['del']);
+    if ($del_view) {
+        if ($del_view['post_user'] == $post_user) {
+            if ($oapost->del_parent($_GET['del'])) {
+                $message = '删除联系人成功！';
+                $message_bool = true;
+            } else {
+                $message = '无法删除该联系人。';
+                $message_bool = false;
+            }
+        }
     }
 }
 
@@ -177,7 +178,7 @@ $table_list = $oapost->view_list($post_user, null, null, 'public', 'addressbook'
             foreach ($table_list as $v) { ?>
                 <tr>
                     <td><a href="<?php echo $page_url.'&view='.$v['id']; ?>" target="_self"><?php echo $v['post_title']; ?></a></td>
-                    <td><div class="btn-group"><a href="<?php echo $page_url.'&view='.$v['id']; ?>#view" class="btn"><i class="icon-search"></i> 详情</a><?php if($v['post_name']){ ?><a href="init.php?init=1&post_user=<?php echo $v['post_name']; ?>#send" role="button" class="btn"><i class="icon-envelope"></i> 发送消息</a><?php } ?><a href="<?php echo $page_url.'&edit='.$v['id']; ?>#edit" role="button" class="btn"><i class="icon-pencil"></i> 编辑</a><a href="<?php echo $page_url.'&del='.$v['id']; ?>" class="btn btn-danger"><i class="icon-trash icon-white"></i> 删除</a></div></td>
+                    <td><div class="btn-group"><a href="<?php echo $page_url.'&view='.$v['id']; ?>#view" class="btn"><i class="icon-search"></i> 详情</a><?php if($v['post_name']){ ?><a href="init.php?init=1&user=<?php echo $v['post_name']; ?>#send" role="button" class="btn"><i class="icon-envelope"></i> 发送消息</a><?php } ?><a href="<?php echo $page_url.'&edit='.$v['id']; ?>#edit" role="button" class="btn"><i class="icon-pencil"></i> 编辑</a><a href="<?php echo $page_url.'&del='.$v['id']; ?>" class="btn btn-danger"><i class="icon-trash icon-white"></i> 删除</a></div></td>
                 </tr>
     <?php }
 } ?>

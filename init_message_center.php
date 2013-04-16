@@ -2,7 +2,7 @@
 /**
  * 消息中心页面
  * @author fotomxq <fotomxq.me>
- * @version 4
+ * @version 5
  * @package oa
  */
 if (isset($init_page) == false) {
@@ -96,9 +96,9 @@ if (isset($_GET['user']) == true) {
 
 /**
  * 获取消息列表记录数
- * @since 1
+ * @since 5
  */
-$message_list_row = $oapost->view_list_row($post_user, null, null, 'public', 'message');
+$message_list_row = $oapost->view_list_row($post_user, null, null, 'public', 'message', null, null);
 
 /**
  * 计算页码
@@ -117,9 +117,9 @@ $page_next = $page + 1;
 
 /**
  * 获取消息列表
- * @since 1
+ * @since 5
  */
-$message_list = $oapost->view_list($post_user, null, null, 'public', 'message', $page, $max, $sort, $desc);
+$message_list = $oapost->view_list($post_user, null, null, 'public', 'message', $page, $max, $sort, $desc, null, null);
 ?>
 <!-- 管理表格 -->
 <h2>系统消息管理中心</h2>
