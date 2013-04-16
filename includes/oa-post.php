@@ -7,18 +7,20 @@
  * <p>* 通讯录：post_type必须为addressbook；post_user表示通讯录所属用户；post_parent表示所属子信息，0表示某人，非0表示该记录为子信息并指向post id；post_title表示联系人姓名或子信息名称，如“电话号码”；post_content表示子信息内容，如电话号码“150xxx”；post_name表示该人存在用户，并指向该用户ID，如果不存在则为null。</p>
  * <p>   通讯录记录示例(联系人)：ID=1,post_type='addressbook',post_user=1,post_parent=0,post_title='张三',post_content=null,post_name=1</p>
  * <p>   (联系人信息)：ID=2,post_type='addressbook',post_user=1,post_parent=1,post_title='联系电话',post_content='15003540000',post_name=null</p>
+ * <p>* 留言薄：post_type必须为messageboard；post_user表示发表用户；post_content表示留言内容；post_parent回复上一级ID</p>
+ * <p>  留言薄示例：ID=1,post_type='messageboard',post_user=1,post_content='内容',post_partent=0</p>
  * @author fotomxq <fotomxq.me>
- * @version 4
+ * @version 5
  * @package oa
  */
 class oapost {
 
     /**
      * Type标识组
-     * @since 3
+     * @since 5
      * @var array 
      */
-    private $type_values = array('message' => 'message', 'text' => 'text', 'addressbook' => 'addressbook');
+    private $type_values = array('message' => 'message', 'text' => 'text', 'addressbook' => 'addressbook', 'messageboard' => 'messageboard');
 
     /**
      * 表名称

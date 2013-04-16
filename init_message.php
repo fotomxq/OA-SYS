@@ -2,7 +2,7 @@
 /**
  * 消息中心页面
  * @author fotomxq <fotomxq.me>
- * @version 1
+ * @version 2
  * @package oa
  */
 if (isset($init_page) == false) {
@@ -133,10 +133,10 @@ $message_list = $oapost->view_list(null, null, null, 'public', 'message', $page,
 <!-- 页码 -->
 <ul class="pager">
     <li class="previous<?php if($page<=1){ echo ' disabled'; } ?>">
-        <a href="init.php?init=11&page=<?php echo $page_prev; ?>">&larr; 上一页</a>
+        <a href="<?php echo $page_url.'&page='.$page_prev; ?>">&larr; 上一页</a>
     </li>
     <li class="next<?php if($page>=$page_max){ echo ' disabled'; } ?>">
-        <a href="init.php?init=11&page=<?php echo $page_next; ?>">下一页 &rarr;</a>
+        <a href="<?php echo $page_url.'&page='.$page_next; ?>">下一页 &rarr;</a>
     </li>
 </ul>
 
