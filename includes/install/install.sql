@@ -75,7 +75,11 @@ CREATE TABLE IF NOT EXISTS `oa_configs` (
 
 INSERT INTO `oa_configs` (`id`, `config_name`, `config_value`, `config_default`) VALUES
 (1, 'WEB_TITLE', 'OA办公系统', 'OA办公系统'),
-(2, 'USER_TIMEOUT', '900', '900');
+(2, 'USER_TIMEOUT', '900', '900'),
+(3, 'UPLOADFILE_SIZE_MIN', '1','1'),
+(4, 'UPLOADFILE_SIZE_MAX', '153600','153600'),
+(5, 'UPLOADFILE_ON', '1','1'),
+(6, 'UPLOADFILE_INHIBIT_TYPE', 'exe,bat,php,html,htm,shall','exe,bat,php,html,htm,shall');
 
 -- --------------------------------------------------------
 
