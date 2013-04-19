@@ -3,7 +3,7 @@
 /**
  * 全局设定
  * @author fotomxq <fotomxq.me>
- * @version 8
+ * @version 9
  * @package Core
  */
 /**
@@ -96,4 +96,11 @@ $website_footer = $oaconfig->load('PAGE_FOOTER_COPYRIGHT');
  * @since 8
  */
 define('UPLOADFILE_DIR', DIR_DATA . DS . 'files');
+
+/**
+ * 引入post类并创建实例
+ * @since 9
+ */
+require(DIR_LIB . DS . 'oa-post.php');
+$oapost = new oapost($db, $ip_arr['id']);
 ?>

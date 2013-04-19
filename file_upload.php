@@ -3,7 +3,7 @@
 /**
  * 上传文件处理模块
  * @author fotomxq <fotomxq.me>
- * @version 1
+ * @version 2
  * @package oa
  */
 /**
@@ -11,13 +11,6 @@
  * @since 1
  */
 require('logged.php');
-
-/**
- * 引入post类并创建实例
- * @since 1
- */
-require(DIR_LIB . DS . 'oa-post.php');
-$oapost = new oapost($db, $ip_arr['id']);
 
 /**
  * 引入文件处理类

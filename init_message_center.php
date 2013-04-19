@@ -2,19 +2,12 @@
 /**
  * 消息中心页面
  * @author fotomxq <fotomxq.me>
- * @version 5
+ * @version 6
  * @package oa
  */
 if (isset($init_page) == false) {
     die();
 }
-
-/**
- * 引入post类并创建实例
- * @since 1
- */
-require(DIR_LIB . DS . 'oa-post.php');
-$oapost = new oapost($db, $ip_arr['id']);
 
 /**
  * 操作消息内容

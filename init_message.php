@@ -2,7 +2,7 @@
 /**
  * 消息中心页面
  * @author fotomxq <fotomxq.me>
- * @version 2
+ * @version 3
  * @package oa
  */
 if (isset($init_page) == false) {
@@ -10,21 +10,13 @@ if (isset($init_page) == false) {
 }
 
 /**
- * 引入post类并创建实例
- * @since 1
- */
-require(DIR_LIB . DS . 'oa-post.php');
-$oapost = new oapost($db, $ip_arr['id']);
-
-/**
  * 初始化变量
- * @since 1
+ * @since 3
  */
 $page = isset($_GET['page']) ? $_GET['page'] : 1;
 $max = 10;
 $sort = 0;
 $desc = true;
-$post_user = $oauser->get_session_login();
 
 /**
  * 操作消息内容
@@ -48,7 +40,7 @@ if (isset($_POST['new_message']) == true && isset($_POST['new_name']) == true) {
     }
     $new_user_view = $oauser->view_user_name($_POST['new_name']);
     if ($new_user_view) {
-        if ($oapost->add($title, $_POST['new_message'], 'message', 0, $post_user, null, $new_user_view['id'], null, 'public', null)) {
+        if ($oapost->add($title, $_POST['new_message'], 'message', 0, $post_user, null, $new_user_view['id'], null, 'private', null)) {
             $message = '消息成功发送！';
             $message_bool = true;
         } else {
@@ -63,28 +55,34 @@ if (isset($_POST['new_message']) == true && isset($_POST['new_name']) == true) {
 
 /**
  * 删除消息
- * @since 1
+ * @since 3
  */
 if (isset($_GET['del']) == true) {
     $del_view = $oapost->view($_GET['del']);
     if ($del_view) {
-        if ($del_view['post_user'] != $post_user && $del_view['post_name'] == $post_user) {
+        if ($del_view['post_status'] == 'private' && ($del_view['post_user'] == $post_user || $del_view['post_name'] == $post_user)) {
             if ($oapost->del($_GET['del'])) {
                 $message = '删除消息成功！';
                 $message_bool = true;
             } else {
-                $message = '无法删除该消息。';
+                $message = '无法删除该消息，删除失败。';
                 $message_bool = false;
             }
+        } else {
+            $message = '无法删除该消息，该消息不存在。';
+            $message_bool = false;
         }
+    } else {
+        $message = '无法删除该消息，该消息不存在。';
+        $message_bool = false;
     }
 }
 
 /**
  * 获取消息列表记录数
- * @since 1
+ * @since 3
  */
-$message_list_row = $oapost->view_list_row(null, null, null, 'public', 'message',null,$post_user);
+$message_list_row = $oapost->view_list_row(null, null, null, 'private', 'message',null,$post_user);
 
 /**
  * 计算页码
@@ -103,9 +101,9 @@ $page_next = $page + 1;
 
 /**
  * 获取消息列表
- * @since 1
+ * @since 3
  */
-$message_list = $oapost->view_list(null, null, null, 'public', 'message', $page, $max, $sort, $desc, null, $post_user);
+$message_list = $oapost->view_list(null, null, null, 'private', 'message', $page, $max, $sort, $desc, null, $post_user);
 ?>
 <!-- 管理表格 -->
 <h2>短消息中心</h2>

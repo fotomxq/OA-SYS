@@ -2,7 +2,7 @@
 /**
  * 留言薄页面
  * @author fotomxq <fotomxq.me>
- * @version 1
+ * @version 2
  * @package oa
  */
 if (isset($init_page) == false) {
@@ -10,21 +10,13 @@ if (isset($init_page) == false) {
 }
 
 /**
- * 引入post类并创建实例
- * @since 1
- */
-require(DIR_LIB . DS . 'oa-post.php');
-$oapost = new oapost($db, $ip_arr['id']);
-
-/**
  * 初始化变量
- * @since 1
+ * @since 2
  */
 $page = isset($_GET['page']) ? $_GET['page'] : 1;
 $max = 10;
 $sort = 0;
 $desc = true;
-$post_user = $oauser->get_session_login();
 
 /**
  * 操作消息内容
