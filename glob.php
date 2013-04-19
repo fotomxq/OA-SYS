@@ -3,7 +3,7 @@
 /**
  * 全局设定
  * @author fotomxq <fotomxq.me>
- * @version 7
+ * @version 8
  * @package Core
  */
 /**
@@ -90,4 +90,10 @@ $log = new corelog($ip_arr['addr'], $db, true);
 $website_title = $oaconfig->load('WEB_TITLE');
 //页脚信息
 $website_footer = $oaconfig->load('PAGE_FOOTER_COPYRIGHT');
+
+/**
+ * 上传文件存储路径
+ * @since 8
+ */
+define('UPLOADFILE_DIR', DIR_DATA . DS . 'files');
 ?>
