@@ -3,7 +3,7 @@
 /**
  * 个人网盘页面
  * @author fotomxq <fotomxq.me>
- * @version 1
+ * @version 2
  * @package oa
  */
 /**
@@ -248,7 +248,7 @@ $table_list = $oapost->view_list($post_user, null, null, $post_status, $post_typ
 <table class="table table-hover table-bordered table-striped">
     <thead>
         <tr>
-            <th><i class="icon-user"></i> 文件名称</th>
+            <th><i class="icon-file"></i> 文件名称</th>
             <th><i class="icon-calendar"></i> 上传时间</th>
             <th><i class="icon-asterisk"></i> 操作</th>
         </tr>

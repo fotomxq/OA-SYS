@@ -12,6 +12,8 @@
  * <p>* 文件：post_type='file'；post_status='public|private|trash'依次对应共享、私有、回收站三种状态；post_meta对应文件meta头信息；post_content表示文件描述；post_name表示文件原始名称；post_title表示文件显示名称；post_parent表示从属文件关系</p>
  * <p>  文件示例：ID:1,post_type='file',post_status='private',post_user=1,post_name='filename.txt',post_title='文件默认别名',post_content='文件默认描述',post_meta='[文件meta信息]',post_parent=0,post_url='201304/20130421131022_1523.txt',post_password='文件MD5值'</p>
  * <p>  文件从属示例：ID:2,post_type='file',post_status='public',post_user=1,post_title='文件引用别名A',post_content='文件引用描述B',post_parent=1,post_password='文件访问密码'</p>
+ * <p>* 日记：post_type='text'；post_title为标题；post_content为内容；post_status必须为private；post_user对用用户</p>
+ * <p>  日记示例：ID:1,post_type='text',post_title='日记标题',post_content='日记内容'.post_status='private',post_user=1</p>
  * @author fotomxq <fotomxq.me>
  * @version 7
  * @package oa

@@ -3,7 +3,7 @@
 /**
  * 文件分享中心
  * @author fotomxq <fotomxq.me>
- * @version 1
+ * @version 2
  * @package oa
  */
 /**
@@ -90,7 +90,7 @@ $table_list = $oapost->view_list(null, null, null, $post_status, $post_type, $pa
 <table class="table table-hover table-bordered table-striped">
     <thead>
         <tr>
-            <th><i class="icon-user"></i> 文件名称</th>
+            <th><i class="icon-file"></i> 文件名称</th>
             <th><i class="icon-calendar"></i> 上传时间</th>
             <th><i class="icon-user"></i> 上传用户</th>
             <th><i class="icon-asterisk"></i> 操作</th>
