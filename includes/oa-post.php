@@ -9,8 +9,11 @@
  * <p>   (联系人信息)：ID=2,post_type='addressbook',post_user=1,post_parent=1,post_title='联系电话',post_content='15003540000',post_name=null</p>
  * <p>* 留言薄：post_type必须为messageboard；post_user表示发表用户；post_content表示留言内容；post_parent回复上一级ID</p>
  * <p>  留言薄示例：ID=1,post_type='messageboard',post_user=1,post_content='内容',post_partent=0</p>
+ * <p>* 文件：post_type='file'；post_status='public|private|trash'依次对应共享、私有、回收站三种状态；post_meta对应文件meta头信息；post_content表示文件描述；post_name表示文件原始名称；post_title表示文件显示名称；post_parent表示从属文件关系</p>
+ * <p>  文件示例：ID:1,post_type='file',post_status='private',post_user=1,post_name='filename.txt',post_title='文件默认别名',post_content='文件默认描述',post_meta='[文件meta信息]',post_parent=0,post_url='201304/20130421131022_1523.txt',post_password='文件MD5值'</p>
+ * <p>  文件从属示例：ID:2,post_type='file',post_status='public',post_user=1,post_title='文件引用别名A',post_content='文件引用描述B',post_parent=1,post_password='文件访问密码'</p>
  * @author fotomxq <fotomxq.me>
- * @version 6
+ * @version 7
  * @package oa
  */
 class oapost {
@@ -20,7 +23,7 @@ class oapost {
      * @since 5
      * @var array 
      */
-    private $type_values = array('message' => 'message', 'text' => 'text', 'addressbook' => 'addressbook', 'messageboard' => 'messageboard');
+    private $type_values = array('message' => 'message', 'text' => 'text', 'addressbook' => 'addressbook', 'messageboard' => 'messageboard', 'file' => 'file');
 
     /**
      * 表名称
@@ -65,21 +68,22 @@ class oapost {
 
     /**
      * 查询列表
-     * @since 4
+     * @since 7
      * @param string $user 用户ID
      * @param string $title 搜索标题
      * @param string $content 搜索内容
-     * @param string $status 状态 public|private|trush
-     * @param string $type 识别类型 text|picture|file
+     * @param string $status 状态 public|private|trush|null-删除该条件
+     * @param string $type 识别类型 message|text|addressbook|messageboard|file
      * @param int $page 页数
      * @param int $max 页长
      * @param int $sort 排序字段键值
      * @param boolean $desc 是否倒序
-     * @param int $parent 上一级ID
+     * @param int $parent 上一级ID null-无条件|''-为非0|int-为某个值
      * @param string $name 名称 null-等于空值|''-如果非空且空字符串则删除该条件|string-等于字符串
+     * @param string $pw 搜索密码或SHA1识别码
      * @return boolean
      */
-    public function view_list($user = null, $title = null, $content = null, $status = 'public', $type = 'text', $page = 1, $max = 10, $sort = 7, $desc = true, $parent = null, $name = '') {
+    public function view_list($user = null, $title = null, $content = null, $status = 'public', $type = 'text', $page = 1, $max = 10, $sort = 7, $desc = true, $parent = null, $name = '', $pw = null) {
         $return = false;
         $sql_where = '';
         if ($title) {
@@ -97,7 +101,11 @@ class oapost {
             $sql_where = $sql_where . ' `post_user`=:user AND';
         }
         if ($parent !== null) {
-            $sql_where = $sql_where . ' `post_parent`=:parent AND';
+            if ($parent === '') {
+                $sql_where = $sql_where . ' `post_parent`!=0 AND';
+            } else {
+                $sql_where = $sql_where . ' `post_parent`=:parent AND';
+            }
         }
         if ($name !== null) {
             //如果$name非null且非空
@@ -108,8 +116,14 @@ class oapost {
         } else {
             $sql_where = $sql_where . ' `post_name` is NULL AND';
         }
+        if ($pw !== null) {
+            $sql_where = $sql_where . ' `post_password`=:password AND';
+        }
+        if ($status !== null) {
+            $sql_where = $sql_where . ' `post_status` = :status AND';
+        }
         $sql_desc = $desc ? 'DESC' : 'ASC';
-        $sql = 'SELECT `id`,`post_title`,`post_date`,`post_modified`,`post_ip`,`post_type`,`post_order`,`post_parent`,`post_user`,`post_password`,`post_name`,`post_url`,`post_status`,`post_meta` FROM `' . $this->table_name . '` WHERE ' . $sql_where . ' `post_status`=:status AND `post_type`=:type ORDER BY ' . $this->fields[$sort] . ' ' . $sql_desc . ' LIMIT ' . ($page - 1) * $max . ',' . $max;
+        $sql = 'SELECT `id`,`post_title`,`post_date`,`post_modified`,`post_ip`,`post_type`,`post_order`,`post_parent`,`post_user`,`post_password`,`post_name`,`post_url`,`post_status`,`post_meta` FROM `' . $this->table_name . '` WHERE ' . $sql_where . ' `post_type`=:type ORDER BY ' . $this->fields[$sort] . ' ' . $sql_desc . ' LIMIT ' . ($page - 1) * $max . ',' . $max;
         $sth = $this->db->prepare($sql);
         if ($title) {
             $sth->bindParam(':title', $title, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
@@ -120,13 +134,18 @@ class oapost {
         if ($user) {
             $sth->bindParam(':user', $user, PDO::PARAM_INT | PDO::PARAM_INPUT_OUTPUT);
         }
-        if ($parent !== null) {
+        if ($parent !== null && $parent !== '') {
             $sth->bindParam(':parent', $parent, PDO::PARAM_INT | PDO::PARAM_INPUT_OUTPUT);
         }
         if ($name) {
             $sth->bindParam(':name', $name, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
         }
-        $sth->bindParam(':status', $status, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
+        if ($pw !== null) {
+            $sth->bindParam(':password', $pw, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
+        }
+        if ($status !== null) {
+            $sth->bindParam(':status', $status, PDO::PARAM_STR);
+        }
         $type = $this->get_type($type);
         $sth->bindParam(':type', $type, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
         if ($sth->execute() == true) {
@@ -137,17 +156,18 @@ class oapost {
 
     /**
      * 获取条件下的记录数
-     * @since 4
+     * @since 7
      * @param string $user 用户ID
      * @param string $title 搜索标题
      * @param string $content 搜索内容
-     * @param string $status 状态 public|private|trush
-     * @param string $type 识别类型 text|picture|file
-     * @param int $parent 上一级ID
+     * @param string $status 状态 public|private|trush|null-删除该条件
+     * @param string $type 识别类型 message|text|addressbook|messageboard|file
+     * @param int $parent 上一级ID null-无条件|''-为非0|int-为某个值
      * @param string $name 名称 null-等于空值|''-如果非空且空字符串则删除该条件|string-等于字符串
+     * @param string $pw 搜索密码或SHA1识别码
      * @return boolean
      */
-    public function view_list_row($user = null, $title = null, $content = null, $status = 'public', $type = 'text', $parent = null, $name = '') {
+    public function view_list_row($user = null, $title = null, $content = null, $status = 'public', $type = 'text', $parent = null, $name = '', $pw = null) {
         $return = false;
         $sql_where = '';
         if ($title) {
@@ -164,8 +184,12 @@ class oapost {
         if ($user) {
             $sql_where = $sql_where . ' `post_user`=:user AND';
         }
-        if ($parent != null) {
-            $sql_where = $sql_where . ' `post_parent`=:parent AND';
+        if ($parent !== null) {
+            if ($parent === '') {
+                $sql_where = $sql_where . ' `post_parent`!=0 AND';
+            } else {
+                $sql_where = $sql_where . ' `post_parent`=:parent AND';
+            }
         }
         if ($name !== null) {
             //如果$name非null且非空
@@ -176,7 +200,13 @@ class oapost {
         } else {
             $sql_where = $sql_where . ' `post_name` is NULL AND';
         }
-        $sql = 'SELECT COUNT(id) FROM `' . $this->table_name . '` WHERE ' . $sql_where . ' `post_status`=:status AND `post_type`=:type';
+        if ($pw !== null) {
+            $sql_where = $sql_where . ' `post_password` = :password AND';
+        }
+        if ($status !== null) {
+            $sql_where = $sql_where . ' `post_status` = :status AND';
+        }
+        $sql = 'SELECT COUNT(id) FROM `' . $this->table_name . '` WHERE ' . $sql_where . ' `post_type`=:type';
         $sth = $this->db->prepare($sql);
         if ($title) {
             $sth->bindParam(':title', $title, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
@@ -187,13 +217,18 @@ class oapost {
         if ($user) {
             $sth->bindParam(':user', $user, PDO::PARAM_INT | PDO::PARAM_INPUT_OUTPUT);
         }
-        if ($parent != null) {
+        if ($parent !== null && $parent !== '') {
             $sth->bindParam(':parent', $parent, PDO::PARAM_INT | PDO::PARAM_INPUT_OUTPUT);
         }
         if ($name) {
             $sth->bindParam(':name', $name, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
         }
-        $sth->bindParam(':status', $status, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
+        if ($pw) {
+            $sth->bindParam(':password', $pw, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
+        }
+        if ($status !== null) {
+            $sth->bindParam(':status', $status, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
+        }
         $type = $this->get_type($type);
         $sth->bindParam(':type', $type, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
         if ($sth->execute() == true) {
@@ -224,13 +259,13 @@ class oapost {
 
     /**
      * 添加新的记录
-     * @since 6
+     * @since 7
      * @param string $title 标题
      * @param string $content 内容
      * @param string $type 类型
      * @param int $parent 上一级ID
      * @param int $user 用户ID
-     * @param string $pw 密码明文
+     * @param string $pw 密码SHA1或匹配值
      * @param string $name 媒体文件原名称
      * @param string $url 媒体路径或内容访问路径
      * @param string $status 状态 public|private|trash
@@ -248,9 +283,6 @@ class oapost {
         $sth->bindParam(':type', $type, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
         $sth->bindParam(':parent', $parent, PDO::PARAM_INT | PDO::PARAM_INPUT_OUTPUT);
         $sth->bindParam(':user', $user, PDO::PARAM_INT | PDO::PARAM_INPUT_OUTPUT);
-        if ($pw != null) {
-            $pw = sha1($pw);
-        }
         $sth->bindParam(':pw', $pw, PDO::PARAM_STR);
         $sth->bindParam(':name', $name, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
         $sth->bindParam(':url', $url, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
@@ -264,14 +296,14 @@ class oapost {
 
     /**
      * 编辑记录
-     * @since 1
+     * @since 7
      * @param int $id 主键
      * @param string $title 标题
      * @param string $content 内容
      * @param string $type 类型
      * @param int $parent 上一级ID
      * @param int $user 用户ID
-     * @param string $pw 密码明文
+     * @param string $pw 密码SHA1或匹配值
      * @param string $name 媒体文件原名称
      * @param string $url 媒体路径或内容访问路径
      * @param string $status 状态 public|private|trash
@@ -288,9 +320,6 @@ class oapost {
         $sth->bindParam(':type', $type, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
         $sth->bindParam(':parent', $parent, PDO::PARAM_INT | PDO::PARAM_INPUT_OUTPUT);
         $sth->bindParam(':user', $user, PDO::PARAM_INT | PDO::PARAM_INPUT_OUTPUT);
-        if ($pw != null) {
-            $pw = sha1($pw);
-        }
         $sth->bindParam(':pw', $pw, PDO::PARAM_STR);
         $sth->bindParam(':name', $name, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
         $sth->bindParam(':url', $url, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);

@@ -1,8 +1,8 @@
 <?php
 /**
- * 消息中心页面
+ * 个人短消息中心
  * @author fotomxq <fotomxq.me>
- * @version 3
+ * @version 4
  * @package oa
  */
 if (isset($init_page) == false) {

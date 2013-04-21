@@ -2,7 +2,7 @@
 /**
  * 系统设置中心
  * @author fotomxq <fotomxq.me>
- * @version 3
+ * @version 4
  * @package oa
  */
 if (isset($init_page) == false) {
@@ -50,6 +50,11 @@ if (isset($_GET['edit']) == true) {
             $message_bool = $oaconfig->save('USER_TIMEOUT', (int) $_POST['config_user_timeout']);
         }
         message_config_false('无法修改用户登录超时时间。');
+    }
+    //网站地址
+    if (isset($_POST['config_web_url'])) {
+        $message_bool = $oaconfig->save('WEB_URL', $_POST['config_web_url']);
+        message_config_false('无法修改网站地址。');
     }
     //上传功能开关
     if (isset($_POST['config_uploadfile_on'])) {
@@ -100,6 +105,13 @@ if(isset($_GET['return']) == true){
             <div class="input-prepend">
                 <span class="add-on"><i class="icon-edit"></i></span>
                 <input type="text" id="config_web_title" name="config_web_title" placeholder="网站标题" value="<?php echo $oaconfig->load('WEB_TITLE'); ?>">
+            </div>
+        </div>
+        <label class="control-label" for="config_web_url">网站地址</label>
+        <div class="controls">
+            <div class="input-prepend">
+                <span class="add-on"><i class="icon-globe"></i></span>
+                <input type="text" id="config_web_url" name="config_web_url" placeholder="网站地址" value="<?php echo $oaconfig->load('WEB_URL'); ?>">
             </div>
         </div>
         <label class="control-label" for="config_user_timeout">用户登录超时时间(秒)，范围必须在120~999999秒之间</label>

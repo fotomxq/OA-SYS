@@ -79,7 +79,8 @@ INSERT INTO `oa_configs` (`id`, `config_name`, `config_value`, `config_default`)
 (3, 'UPLOADFILE_SIZE_MIN', '1','1'),
 (4, 'UPLOADFILE_SIZE_MAX', '153600','153600'),
 (5, 'UPLOADFILE_ON', '1','1'),
-(6, 'UPLOADFILE_INHIBIT_TYPE', 'exe,bat,php,html,htm,shall','exe,bat,php,html,htm,shall');
+(6, 'UPLOADFILE_INHIBIT_TYPE', 'exe,bat,php,html,htm,shall','exe,bat,php,html,htm,shall'),
+(7, 'WEB_URL', 'http://localhost/oasys', 'http://localhost');;
 
 -- --------------------------------------------------------
 
@@ -98,7 +99,7 @@ CREATE TABLE IF NOT EXISTS `oa_posts` (
   `post_order` int(11) NOT NULL DEFAULT '0' COMMENT '排序',
   `post_parent` bigint(20) unsigned NOT NULL COMMENT '上一级ID',
   `post_user` bigint(20) unsigned DEFAULT NULL COMMENT '用户ID',
-  `post_password` char(41) COLLATE utf8_bin DEFAULT NULL COMMENT '访问密码',
+  `post_password` varchar(41) COLLATE utf8_bin DEFAULT NULL COMMENT '访问密码或内容匹配值',
   `post_name` varchar(300) COLLATE utf8_bin DEFAULT NULL COMMENT '媒体文件名称',
   `post_url` varchar(500) COLLATE utf8_bin DEFAULT NULL COMMENT '多媒体文件路径',
   `post_status` varchar(30) COLLATE utf8_bin NOT NULL DEFAULT 'public' COMMENT '发布状态',

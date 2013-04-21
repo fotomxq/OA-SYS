@@ -110,7 +110,7 @@ class corefile {
      */
     static public function list_dir($src, $search = '', $flags = null) {
         $res = null;
-        $src = $src . core_file::$ds . $search;
+        $src = $src . corefile::$ds . $search;
         if ($flags) {
             $res = glob($src, $flags);
         } else {
@@ -126,7 +126,7 @@ class corefile {
      */
     static public function new_dir($src) {
         $re = false;
-        if (core_file::is_dir($src)) {
+        if (corefile::is_dir($src)) {
             $re = true;
         } else {
             $re = mkdir($src, 0777, true);
@@ -142,20 +142,20 @@ class corefile {
      */
     static public function copy_dir($src, $dest) {
         $re = true;
-        if (core_file::new_dir($dest) == true) {
-            $dir_list = core_file::list_dir($src, '*');
+        if (corefile::new_dir($dest) == true) {
+            $dir_list = corefile::list_dir($src, '*');
             if ($dir_list != false) {
                 foreach ($dir_list as $v) {
-                    $v_src = $src . core_file::$ds . $v;
-                    $v_dest = $dest . core_file::$ds . $v;
-                    if (core_file::is_dir($v_src) == true) {
-                        if (core_file::copy_dir($v_src, $v_dest) == false) {
+                    $v_src = $src . corefile::$ds . $v;
+                    $v_dest = $dest . corefile::$ds . $v;
+                    if (corefile::is_dir($v_src) == true) {
+                        if (corefile::copy_dir($v_src, $v_dest) == false) {
                             $re = false;
                             break;
                         }
                     }
-                    if (core_file::is_file($v_src) == true) {
-                        if (core_file::copy_file($v_src, $v_dest) == false) {
+                    if (corefile::is_file($v_src) == true) {
+                        if (corefile::copy_file($v_src, $v_dest) == false) {
                             $re = false;
                             break;
                         }
@@ -175,19 +175,19 @@ class corefile {
      */
     static public function delete_dir($src) {
         $re = true;
-        if (core_file::is_dir($src) == true) {
-            $dir_list = core_file::list_dir($src, '*');
+        if (corefile::is_dir($src) == true) {
+            $dir_list = corefile::list_dir($src, '*');
             if ($dir_list != false) {
                 foreach ($dir_list as $v) {
-                    $vSrc = $src . core_file::$ds . $v;
-                    if (core_file::is_dir($vSrc) == true) {
-                        if (core_file::delete_dir($vSrc) == false) {
+                    $vSrc = $src . corefile::$ds . $v;
+                    if (corefile::is_dir($vSrc) == true) {
+                        if (corefile::delete_dir($vSrc) == false) {
                             $re = false;
                             break;
                         }
                     }
-                    if (core_file::is_file($vSrc) == true) {
-                        if (core_file::delete_file($vSrc) == false) {
+                    if (corefile::is_file($vSrc) == true) {
+                        if (corefile::delete_file($vSrc) == false) {
                             $re = false;
                             break;
                         }

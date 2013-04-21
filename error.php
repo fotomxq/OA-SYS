@@ -2,7 +2,7 @@
 /**
  * 错误响应页面
  * @author fotomxq <fotomxq.me>
- * @version 4
+ * @version 5
  * @package oa
  */
 $error_arr = array(
@@ -10,10 +10,7 @@ $error_arr = array(
     'logged' => '您还没有登陆，或者操作超时，请尝试重新登陆。<a href="index.php" target="_self">点击这里返回登陆页面。</a>',
     'noadmin' => '您不是管理员，无法访问该页面。',
     'selferror'=>'无法获取用户数据，请尝试重新登录。',
-    'uploadfile'=>'文件上传失败，请重试。',
-    'uploadfile-off'=>'上传功能已经关闭了。',
-    'uploadfile-size'=>'上传文件超过限制大小。',
-    'uploadfile-type'=>'系统禁止上传该文件类型。');
+    'downloadfile-pw'=>'该文件被加密了，您必须输入密码才能访问。');
 ?>
 <!DOCTYPE html>
 <html>

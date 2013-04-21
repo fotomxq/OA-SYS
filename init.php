@@ -2,7 +2,7 @@
 /**
  * 登录后首页
  * @author fotomxq <fotomxq.me>
- * @version 10
+ * @version 11
  * @package oa
  */
 /**
@@ -45,6 +45,13 @@ $page_url = 'init.php?init=' . $init_page;
  * @since 9
  */
 $post_user = $oauser->get_session_login();
+
+/**
+ * 引入post类并创建实例
+ * @since 11
+ */
+require(DIR_LIB . DS . 'oa-post.php');
+$oapost = new oapost($db, $ip_arr['id']);
 
 /**
  * 计算用户消息提示
@@ -144,7 +151,7 @@ $tip_message_row = $oapost->view_list_row(null, null, null, 'private', 'message'
                             <li class="dropdown">
                                 <a  href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-user icon-white"></i> 个人中心<b class="caret"></b></a>
                                 <ul class="dropdown-menu">
-                                    <li><a href="init.php?init=1"><i class="icon-envelope"></i> 个人消息 <?php if($tip_message_row>0){ ?><span class="badge badge-info"><?php echo $tip_message_row; ?></span><?php } ?></a></li>
+                                    <li><a href="init.php?init=1"><i class="icon-envelope"></i> 个人消息</a></li>
                                     <li><a href="init.php?init=2"><i class="icon-hdd"></i> 网络硬盘</a></li>
                                     <li><a href="init.php?init=3"><i class="icon-list-alt"></i> 计划任务</a></li>
                                     <li><a href="init.php?init=4"><i class="icon-check"></i> 业绩考评</a></li>
