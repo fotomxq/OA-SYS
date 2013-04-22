@@ -2,7 +2,7 @@
 /**
  * 系统设置中心
  * @author fotomxq <fotomxq.me>
- * @version 4
+ * @version 5
  * @package oa
  */
 if (isset($init_page) == false) {
@@ -33,7 +33,7 @@ function message_config_false($msg) {
 
 /**
  * 编辑系统设置
- * @since 3
+ * @since 5
  */
 if (isset($_GET['edit']) == true) {
     //网站标题
@@ -80,6 +80,11 @@ if (isset($_GET['edit']) == true) {
     if (isset($_POST['config_uploadfile_size_max'])) {
         $message_bool = $oaconfig->save('UPLOADFILE_SIZE_MAX', (int) $_POST['config_uploadfile_size_max']);
         message_config_false('无法修改上传文件最大限制。');
+    }
+    //业绩加权(最终业绩将乘以该值)
+    if (isset($_POST['config_performance_scale'])) {
+        $message_bool = $oaconfig->save('PERFORMANCE_SCALE', (int) $_POST['config_performance_scale']);
+        message_config_false('无法修改业绩加权。');
     }
 }
 
@@ -151,6 +156,13 @@ if(isset($_GET['return']) == true){
             <div class="input-prepend">
                 <span class="add-on"><i class="icon-circle-arrow-up"></i></span>
                 <input type="text" id="config_uploadfile_size_max" name="config_uploadfile_size_max" placeholder="KB" value="<?php echo $oaconfig->load('UPLOADFILE_SIZE_MAX'); ?>">
+            </div>
+        </div>
+        <label class="control-label" for="config_performance_scale">业绩加权(业绩最终分值将乘以该数值)</label>
+        <div class="controls">
+            <div class="input-prepend">
+                <span class="add-on"><i class="icon-random"></i></span>
+                <input type="text" id="config_performance_scale" name="config_performance_scale" placeholder="数字" value="<?php echo $oaconfig->load('PERFORMANCE_SCALE'); ?>">
             </div>
         </div>
         <div>

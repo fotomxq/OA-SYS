@@ -14,8 +14,14 @@
  * <p>  文件从属示例：ID:2,post_type='file',post_status='public',post_user=1,post_title='文件引用别名A',post_content='文件引用描述B',post_parent=1,post_password='文件访问密码'</p>
  * <p>* 日记：post_type='text'；post_title为标题；post_content为内容；post_status必须为private；post_user对用用户</p>
  * <p>  日记示例：ID:1,post_type='text',post_title='日记标题',post_content='日记内容'.post_status='private',post_user=1</p>
+ * <p>* 任务：post_type='task'；post_title任务标题；post_content任务描述；post_name表示开始时间，如20130421140306；post_url表示到期时间；post_parent接收任务，如果非0则表明该记录对应某个任务；post_user接收任务的用户或创建任务的用户；post_status，public公开未完成任务，public-trash过期的公开任务，public-ready公开完成任务准备审批，public-finish表示管理员批准完成，public-fail公开任务审批不合格，private-finish私人完成任务，private个人未完成任务，private-waiver个人放弃个人任务，private-trash过期或删除的任务</p>
+ * <p>  公共任务示例：ID:1,post_type='task',post_status='public|public-trash|public-finish',post_user=1,post_title='任务X',post_content='描述',post_name='20130421140306',post_parent=0</p>
+ * <p>  用户接受任务示例(仅对应公共任务)：ID:2,post_type='task',post_stauts='public|public-fail|public-finish|public-ready|public-trash',post_parent=1,post_content='个人任务标记描述',post_user所属用户</p>
+ * <p>  用户自建任务示例：ID:3,post_type='task',post_status='private|private-finish|private-fail|private-trash',post_parent=0,post_title='任务X',post_content='任务描述',post_user=1,post_name='20130421140306'</p>
+ * <p>* 业绩：post_type='performance'；post_parent对应的任务或不对应任何任务；post_title业绩显示名称；post_user所属用户；post_name签署用户ID；post_url业绩分值；post_user所属用户；post_status必须为private</p>
+ * <p>  业绩示例：ID:4,post_type='performance',post_parent=1,post_title='XA任务',post_user=2,post_name=1,post_url=15,post_status='private'</p>
  * @author fotomxq <fotomxq.me>
- * @version 7
+ * @version 8
  * @package oa
  */
 class oapost {
@@ -25,7 +31,7 @@ class oapost {
      * @since 5
      * @var array 
      */
-    private $type_values = array('message' => 'message', 'text' => 'text', 'addressbook' => 'addressbook', 'messageboard' => 'messageboard', 'file' => 'file');
+    private $type_values = array('message' => 'message', 'text' => 'text', 'addressbook' => 'addressbook', 'messageboard' => 'messageboard', 'file' => 'file', 'task' => 'task', 'performance' => 'performance');
 
     /**
      * 表名称
@@ -233,6 +239,46 @@ class oapost {
         }
         $type = $this->get_type($type);
         $sth->bindParam(':type', $type, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
+        if ($sth->execute() == true) {
+            $return = $sth->fetchColumn();
+        }
+        return $return;
+    }
+
+    /**
+     * 计算某字段数据
+     * @since 8
+     * @param string $type 类型标识
+     * @param int $user 用户ID
+     * @param string $field 计算字段
+     * @param string $date_start 开始时间
+     * @param string $date_end 结束时间
+     * @return int 结果值
+     */
+    public function sum_fields($type = 'performance', $user = null, $field = 'post_url', $date_start = null, $date_end = null) {
+        $return = 0;
+        $sql_where = '';
+        if ($user) {
+            $sql_where = $sql_where . ' `post_user`=:user AND';
+        }
+        if ($date_start) {
+            $sql_where .= ' `post_date` > :start AND';
+        }
+        if ($date_end) {
+            $sql_where .= ' `post_date` < :end AND';
+        }
+        $sql = 'SELECT SUM(`' . $field . '`) FROM `' . $this->table_name . '` WHERE ' . $sql_where . ' `post_type` = :type';
+        $sth = $this->db->prepare($sql);
+        $sth->bindParam(':type', $type, PDO::PARAM_INT | PDO::PARAM_INPUT_OUTPUT);
+        if ($user) {
+            $sth->bindParam(':user', $user, PDO::PARAM_INT | PDO::PARAM_INPUT_OUTPUT);
+        }
+        if ($date_start) {
+            $sth->bindParam(':start', $date_start, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
+        }
+        if ($date_end) {
+            $sth->bindParam(':end', $date_end, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
+        }
         if ($sth->execute() == true) {
             $return = $sth->fetchColumn();
         }

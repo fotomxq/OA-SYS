@@ -80,7 +80,8 @@ INSERT INTO `oa_configs` (`id`, `config_name`, `config_value`, `config_default`)
 (4, 'UPLOADFILE_SIZE_MAX', '153600','153600'),
 (5, 'UPLOADFILE_ON', '1','1'),
 (6, 'UPLOADFILE_INHIBIT_TYPE', 'exe,bat,php,html,htm,shall','exe,bat,php,html,htm,shall'),
-(7, 'WEB_URL', 'http://localhost/oasys', 'http://localhost');;
+(7, 'WEB_URL', 'http://localhost/oasys', 'http://localhost'),
+(8, 'PERFORMANCE_SCALE', '1', '1');
 
 -- --------------------------------------------------------
 

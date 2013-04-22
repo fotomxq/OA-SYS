@@ -2,7 +2,7 @@
 /**
  * 登录后首页
  * @author fotomxq <fotomxq.me>
- * @version 11
+ * @version 12
  * @package oa
  */
 /**
@@ -58,6 +58,18 @@ $oapost = new oapost($db, $ip_arr['id']);
  * @since 10
  */
 $tip_message_row = $oapost->view_list_row(null, null, null, 'private', 'message', null, $post_user);
+
+/**
+ * 计算可接收生产任务个数
+ * @since 12
+ */
+$tip_task_center_row = $oapost->view_list_row(null, null, null, 'public', 'task', 0);
+
+/**
+ * 计算正在进行的生产任务个数
+ * @since 12
+ */
+$tip_task_user_row = $oapost->view_list_row($post_user, null, null, 'public', 'task', '');
 ?>
 
 <!DOCTYPE html>
@@ -194,14 +206,14 @@ $tip_message_row = $oapost->view_list_row(null, null, null, 'private', 'message'
                             <li class="nav-header">个人中心</li>
                             <li><a href="init.php?init=1"><i class="icon-envelope"></i> 个人消息 <?php if($tip_message_row>0){ ?><span class="badge badge-info"><?php echo $tip_message_row; ?></span><?php } ?></a></li>
                             <li><a href="init.php?init=2"><i class="icon-hdd"></i> 网络硬盘</a></li>
-                            <li><a href="init.php?init=3"><i class="icon-list-alt"></i> 计划任务</a></li>
+                            <li><a href="init.php?init=3"><i class="icon-list-alt"></i> 计划任务 <?php if($tip_task_user_row>0){ ?><span class="badge badge-info"><?php echo $tip_task_user_row; ?></span><?php } ?></a></li>
                             <li><a href="init.php?init=4"><i class="icon-check"></i> 业绩考评</a></li>
                             <li><a href="init.php?init=5"><i class="icon-pencil"></i> 工作日记</a></li>
                             <li><a href="init.php?init=6"><i class="icon-book"></i> 通讯录</a></li>
                             <li><a href="init.php?init=7"><i class="icon-user"></i> 修改信息</a></li>
                             <li class="nav-header">共享协作</li>
                             <li><a href="init.php?init=8"><i class="icon-share"></i> 文件共享中心</a></li>
-                            <li><a href="init.php?init=9"><i class="icon-tasks"></i> 生产任务中心</a></li>
+                            <li><a href="init.php?init=9"><i class="icon-tasks"></i> 生产任务中心 <?php if($tip_task_center_row>0){ ?><span class="badge badge-Inverse"><?php echo $tip_task_center_row; ?></span><?php } ?></a></li>
                             <li><a href="init.php?init=10"><i class="icon-comment"></i> 公共留言薄</a></li>
                             <?php if($logged_admin == true){ ?>
                             <li class="nav-header">系统</li>
