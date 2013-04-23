@@ -81,7 +81,12 @@ INSERT INTO `oa_configs` (`id`, `config_name`, `config_value`, `config_default`)
 (5, 'UPLOADFILE_ON', '1','1'),
 (6, 'UPLOADFILE_INHIBIT_TYPE', 'exe,bat,php,html,htm,shall','exe,bat,php,html,htm,shall'),
 (7, 'WEB_URL', 'http://localhost/oasys', 'http://localhost'),
-(8, 'PERFORMANCE_SCALE', '1', '1');
+(8, 'PERFORMANCE_SCALE', '1', '1'),
+(9, 'WEB_ON', '1', '1'),
+(10, 'BACKUP_AUTO_ON', '1', '1'),
+(11, 'BACKUP_LAST_DATE', '20130423', '20130423'),
+(12, 'BACKUP_AUTO_CYCLE', '10', '10'),
+(13, 'BACKUP_DIR', 'content/backup', 'content/backup');
 
 -- --------------------------------------------------------
 
