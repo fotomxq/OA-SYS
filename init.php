@@ -2,7 +2,7 @@
 /**
  * 登录后首页
  * @author fotomxq <fotomxq.me>
- * @version 13
+ * @version 14
  * @package oa
  */
 /**
@@ -116,6 +116,12 @@ if($config_backup_auto_on){
             
             //IP地址
             var ip_addr = "<?php echo $ip_arr['addr']; ?>";
+            //打印链接处理
+            $(document).ready(function() {
+                $("a[href='#print_page']").click(function(){
+                    window.print();
+                });
+            });
         </script>
 
         <!-- Le styles -->

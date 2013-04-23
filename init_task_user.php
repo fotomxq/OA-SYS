@@ -2,7 +2,7 @@
 /**
  * 个人任务中心
  * @author fotomxq <fotomxq.me>
- * @version 1
+ * @version 2
  * @package oa
  */
 /**
@@ -141,6 +141,7 @@ function get_tag_status($status) {
 <p>
     <a href="<?php echo $page_url; ?>" role="button" class="btn<?php if($post_status=='public'){ echo ' disabled'; } ?>"><i class="icon-list"></i> 查看正在进行</a>
     <a href="<?php echo $page_url; ?>&status=all" role="button" class="btn btn-inverse<?php if($post_status===null){ echo ' disabled'; } ?>"><i class="icon-list-alt icon-white"></i> 查看所有</a>
+    <a href="#print_page" target="_self" class="btn"><i class="icon-print"></i> 打印该页</a>
 </p>
 <table class="table table-hover table-bordered table-striped">
     <thead>

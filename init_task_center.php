@@ -2,7 +2,7 @@
 /**
  * 任务发布中心
  * @author fotomxq <fotomxq.me>
- * @version 1
+ * @version 2
  * @package oa
  */
 /**
@@ -291,6 +291,7 @@ function get_tag_status($status) {
     <a href="<?php echo $page_url; ?>&status=public" role="button" class="btn<?php if($post_status=='public'){ echo ' disabled'; } ?>"><i class="icon-list"></i> 查看任务列表</a>
     <a href="<?php echo $page_url; ?>&status=public-finish" role="button" class="btn btn-success<?php if($post_status=='public-finish'){ echo ' disabled'; } ?>"><i class="icon-thumbs-up icon-white"></i> 查看已完结的任务</a>
     <a href="<?php echo $page_url; ?>&status=public-trash" role="button" class="btn btn-danger<?php if($post_status=='public-trash'){ echo ' disabled'; } ?>"><i class="icon-trash icon-white"></i> 查看已删除的任务</a>
+    <a href="#print_page" target="_self" class="btn"><i class="icon-print"></i> 打印该页</a>
 </p>
 <table class="table table-hover table-bordered table-striped">
     <thead>

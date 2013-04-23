@@ -2,7 +2,7 @@
 /**
  * 通讯录页面
  * @author fotomxq <fotomxq.me>
- * @version 4
+ * @version 5
  * @package oa
  */
 if (isset($init_page) == false) {
@@ -11,10 +11,10 @@ if (isset($init_page) == false) {
 
 /**
  * 初始化变量
- * @since 4
+ * @since 5
  */
 $page = isset($_GET['page']) ? $_GET['page'] : 1;
-$max = 10;
+$max = 20;
 $sort = 0;
 $desc = true;
 
@@ -158,6 +158,7 @@ $table_list = $oapost->view_list($post_user, null, null, 'public', 'addressbook'
 ?>
 <!-- 管理表格 -->
 <h2>通讯录</h2>
+<p><a href="#print_page" target="_self" class="btn"><i class="icon-print"></i> 打印该页</a></p>
 <table class="table table-hover table-bordered table-striped">
     <thead>
         <tr>

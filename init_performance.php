@@ -2,7 +2,7 @@
 /**
  * 个人业绩考评
  * @author fotomxq <fotomxq.me>
- * @version 1
+ * @version 2
  * @package oa
  */
 /**
@@ -71,6 +71,7 @@ $performance_mouth_count = $oapost->sum_fields('performance', $post_user, 'post_
 <!-- 管理表格 -->
 <h2>个人业绩考评</h2>
 <p>总业绩：<?php echo $performance_count; ?>；本月：<?php echo $performance_mouth_count; ?></p>
+<p><a href="#print_page" target="_self" class="btn"><i class="icon-print"></i> 打印该页</a></p>
 <table class="table table-hover table-bordered table-striped">
     <thead>
         <tr>
