@@ -2,7 +2,7 @@
 /**
  * OA登录首页
  * @author fotomxq <fotomxq.me>
- * @version 5
+ * @version 6
  * @package oa
  */
 require('glob.php');
@@ -23,7 +23,7 @@ require('glob.php');
                 padding-top: 40px;
                 padding-bottom: 40px;
                 background-image: url(includes/images/login-bg.png);
-                background-repeat: no-repeat round;
+                background-repeat: no-repeat;
                 background-size: 100% auto;
             }
 
