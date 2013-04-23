@@ -4,7 +4,7 @@
  * 已登陆检测
  * <p>如果发现尚未登陆，则直接中断页面</p>
  * @author fotomxq <fotomxq.me>
- * @version 2
+ * @version 3
  * @package oa
  */
 /**
@@ -42,4 +42,13 @@ if ($oauser->status($ip_arr['id'], $config_user_timeout) == true) {
     plugerror('logged');
 }
 unset($config_user_timeout);
+
+/**
+ * 判断网站开关且是否为管理员
+ * @since 3
+ */
+$website_on = $oaconfig->load('WEB_ON');
+if (!$website_on && !$logged_admin) {
+    plugerror('webclose');
+}
 ?>

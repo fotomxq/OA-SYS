@@ -2,7 +2,7 @@
 /**
  * 系统设置中心
  * @author fotomxq <fotomxq.me>
- * @version 5
+ * @version 6
  * @package oa
  */
 if (isset($init_page) == false) {
@@ -33,7 +33,7 @@ function message_config_false($msg) {
 
 /**
  * 编辑系统设置
- * @since 5
+ * @since 6
  */
 if (isset($_GET['edit']) == true) {
     //网站标题
@@ -43,6 +43,12 @@ if (isset($_GET['edit']) == true) {
         }
     }
     message_config_false('无法修改网站标题。');
+    //网站开关
+    if ($message_bool == true && isset($_POST['config_web_on']) == true) {
+        $config_web_on = $_POST['config_web_on'] ? '1' : '0';
+        $message_bool = $oaconfig->save('WEB_ON', (int) $config_web_on);
+        message_config_false('无法修改网站开关状态。');
+    }
     //用户登录超时时效
     if ($message_bool == true && isset($_POST['config_user_timeout']) == true) {
         $message_bool = false;
@@ -86,6 +92,26 @@ if (isset($_GET['edit']) == true) {
         $message_bool = $oaconfig->save('PERFORMANCE_SCALE', (int) $_POST['config_performance_scale']);
         message_config_false('无法修改业绩加权。');
     }
+    //自动备份开关
+    if ($message_bool == true && isset($_POST['config_backup_auto_on']) == true) {
+        $config_backup_auto_on = $_POST['config_backup_auto_on'] ? '1' : '0';
+        $message_bool = $oaconfig->save('BACKUP_AUTO_ON', (int) $config_backup_auto_on);
+        message_config_false('无法修改自动备份开关。');
+    }
+    //自动备份周期
+    if ($message_bool == true && isset($_POST['config_backup_auto_cycle']) == true) {
+        $message_bool = false;
+        $config_backup_auto_cycle = (int) $_POST['config_backup_auto_cycle'];
+        if ($config_backup_auto_cycle > 0) {
+            $message_bool = $oaconfig->save('BACKUP_AUTO_CYCLE', $config_backup_auto_cycle);
+        }
+        message_config_false('无法修改自动备份周期。');
+    }
+    //备份文件存储目录
+    if (isset($_POST['config_backup_dir'])) {
+        $config_backup_dir = $oaconfig->save('BACKUP_DIR', $_POST['config_backup_dir']);
+        message_config_false('无法修改备份目录。');
+    }
 }
 
 /**
@@ -105,12 +131,25 @@ if(isset($_GET['return']) == true){
 <h2>系统设置</h2>
 <form action="init.php?init=12&edit=1" method="post" class="form-actions">
     <div class="control-group">
+        <h4>系统综合</h4>
         <label class="control-label" for="config_web_title">网站标题，不能为空或大于150字</label>
         <div class="controls">
             <div class="input-prepend">
                 <span class="add-on"><i class="icon-edit"></i></span>
                 <input type="text" id="config_web_title" name="config_web_title" placeholder="网站标题" value="<?php echo $oaconfig->load('WEB_TITLE'); ?>">
             </div>
+        </div>
+        <label class="control-label" for="config_web_on">网站开关</label>
+        <p>关闭后所有普通用户都无法登陆该系统。</p>
+        <div class="controls">
+            <div class="btn-group" data-toggle="buttons-radio">
+                <button type="button" class="btn btn-success" value="1"><i class="icon-ok icon-white"></i> 开启</button>
+                <button type="button" class="btn btn-danger" value="0"><i class="icon-off icon-white"></i> 关闭</button>
+            </div>
+            <div class="hidden">
+                <input type="text" name="config_web_on" value="<?php echo $oaconfig->load('WEB_ON'); ?>">
+            </div>
+            <p>&nbsp;</p>
         </div>
         <label class="control-label" for="config_web_url">网站地址</label>
         <div class="controls">
@@ -126,6 +165,15 @@ if(isset($_GET['return']) == true){
                 <input type="text" id="config_user_timeout" name="config_user_timeout" placeholder="用户登录超时时间(秒)" value="<?php echo $oaconfig->load('USER_TIMEOUT'); ?>">
             </div>
         </div>
+        <label class="control-label" for="config_performance_scale">业绩加权(业绩最终分值将乘以该数值)</label>
+        <div class="controls">
+            <div class="input-prepend">
+                <span class="add-on"><i class="icon-random"></i></span>
+                <input type="text" id="config_performance_scale" name="config_performance_scale" placeholder="数字" value="<?php echo $oaconfig->load('PERFORMANCE_SCALE'); ?>">
+            </div>
+        </div>
+        <hr>
+        <h4>文件上传设置</h4>
         <label class="control-label" for="config_uploadfile_on">上传功能</label>
         <div class="controls">
             <div class="btn-group" data-toggle="buttons-radio">
@@ -158,11 +206,31 @@ if(isset($_GET['return']) == true){
                 <input type="text" id="config_uploadfile_size_max" name="config_uploadfile_size_max" placeholder="KB" value="<?php echo $oaconfig->load('UPLOADFILE_SIZE_MAX'); ?>">
             </div>
         </div>
-        <label class="control-label" for="config_performance_scale">业绩加权(业绩最终分值将乘以该数值)</label>
+        <hr>
+        <h4>备份设置</h4>
+        <label class="control-label" for="config_backup_auto_on">自动备份开关</label>
+        <div class="controls">
+            <div class="btn-group" data-toggle="buttons-radio">
+                <button type="button" class="btn btn-success" value="1"><i class="icon-ok icon-white"></i> 开启</button>
+                <button type="button" class="btn btn-danger" value="0"><i class="icon-off icon-white"></i> 关闭</button>
+            </div>
+            <div class="hidden">
+                <input type="text" name="config_backup_auto_on" value="<?php echo $oaconfig->load('BACKUP_AUTO_ON'); ?>">
+            </div>
+            <p>&nbsp;</p>
+        </div>
+        <label class="control-label" for="config_backup_auto_cycle">自动备份周期(天)</label>
         <div class="controls">
             <div class="input-prepend">
-                <span class="add-on"><i class="icon-random"></i></span>
-                <input type="text" id="config_performance_scale" name="config_performance_scale" placeholder="数字" value="<?php echo $oaconfig->load('PERFORMANCE_SCALE'); ?>">
+                <span class="add-on"><i class="icon-time"></i></span>
+                <input type="text" id="config_backup_auto_cycle" name="config_backup_auto_cycle" placeholder="天数" value="<?php echo $oaconfig->load('BACKUP_AUTO_CYCLE'); ?>">
+            </div>
+        </div>
+        <label class="control-label" for="config_backup_dir">备份保存目录</label>
+        <div class="controls">
+            <div class="input-prepend">
+                <span class="add-on"><i class="icon-folder-close"></i></span>
+                <input type="text" id="config_backup_dir" name="config_backup_dir" placeholder="文件夹路径" value="<?php echo $oaconfig->load('BACKUP_DIR'); ?>">
             </div>
         </div>
         <div>

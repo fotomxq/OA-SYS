@@ -2,7 +2,7 @@
 /**
  * 登录后首页
  * @author fotomxq <fotomxq.me>
- * @version 12
+ * @version 13
  * @package oa
  */
 /**
@@ -70,6 +70,17 @@ $tip_task_center_row = $oapost->view_list_row(null, null, null, 'public', 'task'
  * @since 12
  */
 $tip_task_user_row = $oapost->view_list_row($post_user, null, null, 'public', 'task', '');
+
+/**
+ * 自动备份
+ * @since 13
+ */
+$config_backup_auto_on = $oaconfig->load('BACKUP_AUTO_ON');
+$config_backup_date = '';
+if($config_backup_auto_on){
+    $config_backup_date = $oaconfig->load('BACKUP_LAST_DATE');
+    //$config_backup_dir = 
+}
 ?>
 
 <!DOCTYPE html>

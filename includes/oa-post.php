@@ -20,6 +20,8 @@
  * <p>  用户自建任务示例：ID:3,post_type='task',post_status='private|private-finish|private-fail|private-trash',post_parent=0,post_title='任务X',post_content='任务描述',post_user=1,post_name='20130421140306'</p>
  * <p>* 业绩：post_type='performance'；post_parent对应的任务或不对应任何任务；post_title业绩显示名称；post_user所属用户；post_name签署用户ID；post_url业绩分值；post_user所属用户；post_status必须为private</p>
  * <p>  业绩示例：ID:4,post_type='performance',post_parent=1,post_title='XA任务',post_user=2,post_name=1,post_url=15,post_status='private'</p>
+ * <p>* 备份文件：post_type必须为backup；post_user为创建用户；post_name为文件名称；post_status必须为public；post_url表示备份文件的大小(Byte)</p>
+ * <p>  备份文件示例：id:1,post_type='backup',post_user=1,post_name='file.zip',post_status='public',post_url='10241024'</p>
  * @author fotomxq <fotomxq.me>
  * @version 8
  * @package oa
@@ -31,7 +33,7 @@ class oapost {
      * @since 5
      * @var array 
      */
-    private $type_values = array('message' => 'message', 'text' => 'text', 'addressbook' => 'addressbook', 'messageboard' => 'messageboard', 'file' => 'file', 'task' => 'task', 'performance' => 'performance');
+    private $type_values = array('message' => 'message', 'text' => 'text', 'addressbook' => 'addressbook', 'messageboard' => 'messageboard', 'file' => 'file', 'task' => 'task', 'performance' => 'performance', 'backup' => 'backup');
 
     /**
      * 表名称

@@ -2,7 +2,7 @@
 /**
  * 个人首页
  * @author fotomxq <fotomxq.me>
- * @version 1
+ * @version 2
  * @package oa
  */
 if (isset($init_page) == false) {
@@ -53,11 +53,13 @@ $date_mouth_end = date('Y') . '-' . ((int) date('m') + 1) . '-00 00:00:00';
 $performance_mouth_count = $oapost->sum_fields('performance', $post_user, 'post_url', $date_mouth_start, $date_mouth_end);
 ?>
 <!-- 欢迎界面 -->
+<?php if($system_message_view){ ?>
 <div class="hero-unit">
     <h1><?php echo $system_message_view['post_title']; ?></h1>
     <p><?php echo $system_message_view['post_content']; ?></p>
     <p><a class="btn btn-primary btn-large">了解详情</a></p>
 </div>
+<?php } ?>
 
 <!-- 消息 -->
 <ul class="thumbnails">

@@ -2,7 +2,7 @@
 /**
  * 错误响应页面
  * @author fotomxq <fotomxq.me>
- * @version 5
+ * @version 6
  * @package oa
  */
 $error_arr = array(
@@ -10,7 +10,8 @@ $error_arr = array(
     'logged' => '您还没有登陆，或者操作超时，请尝试重新登陆。<a href="index.php" target="_self">点击这里返回登陆页面。</a>',
     'noadmin' => '您不是管理员，无法访问该页面。',
     'selferror'=>'无法获取用户数据，请尝试重新登录。',
-    'downloadfile-pw'=>'该文件被加密了，您必须输入密码才能访问。');
+    'downloadfile-pw'=>'该文件被加密了，您必须输入密码才能访问。',
+    'webclose'=>'网站已经关闭了。');
 ?>
 <!DOCTYPE html>
 <html>
