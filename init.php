@@ -77,9 +77,14 @@ $tip_task_user_row = $oapost->view_list_row($post_user, null, null, 'public', 't
  */
 $config_backup_auto_on = $oaconfig->load('BACKUP_AUTO_ON');
 $config_backup_date = '';
-if($config_backup_auto_on){
+if ($config_backup_auto_on) {
     $config_backup_date = $oaconfig->load('BACKUP_LAST_DATE');
-    //$config_backup_dir = 
+    $config_backup_date_time = mktime(0, 0, 0, (int) substr($config_backup_date, 4, 2), (int) substr($config_backup_date, 6, 2), (int) substr($config_backup_date, 0, 4));
+    $backup_auto_cycle = (int) ((int) time() - $config_backup_date_time) / 86400;
+    $config_backup_auto_cycle = (int) $oaconfig->load('BACKUP_AUTO_CYCLE');
+    if ($backup_auto_cycle > $config_backup_auto_cycle) {
+        plugtourl('init.php?init=13&auto=1');
+    }
 }
 ?>
 

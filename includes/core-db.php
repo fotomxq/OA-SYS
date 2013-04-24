@@ -5,7 +5,7 @@
  * 
  * @author fotomxq <fotomxq.me>
  * @package core
- * @version 5
+ * @version 6
  */
 class coredb extends PDO {
 
@@ -67,14 +67,14 @@ class coredb extends PDO {
     /**
      * 字段数组
      * @var array
-     * @since 5 
+     * @since 6
      */
     public $fields = array(
         'ip' => array('id', 'ip_addr', 'ip_ban'),
         'log' => array('id', 'log_date', 'log_ip', 'log_message'),
         'configs' => array('id', 'config_name', 'config_value', 'config_default'),
         'posts' => array('id', 'post_title', 'post_content', 'post_date', 'post_modified', 'post_ip', 'post_type', 'post_order', 'post_parent', 'post_user', 'post_password', 'post_name', 'post_url', 'post_status', 'post_meta'),
-        'user' => array('id', 'user_username', 'user_password', 'user_email', 'user_name', 'user_group', 'user_date', 'user_login_date', 'user_ip', 'user_login_session', 'user_status', 'user_remember'),
+        'user' => array('id', 'user_username', 'user_password', 'user_email', 'user_name', 'user_group', 'user_date', 'user_login_date', 'user_ip', 'user_session', 'user_status', 'user_remember'),
         'ugroup' => array('id', 'group_name', 'group_power', 'group_status'));
 
     /**

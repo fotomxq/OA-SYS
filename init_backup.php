@@ -23,6 +23,10 @@ $sort = 0;
 $desc = true;
 $post_type = 'backup';
 $post_status = 'public';
+$backup_dir = $oaconfig->load('BACKUP_DIR');
+if (!$backup_dir) {
+    $backup_dir = DIR_DATA . DS . 'backup';
+}
 
 /**
  * 提示消息变量
@@ -32,47 +36,92 @@ $message = '';
 $message_bool = false;
 
 /**
+ * 引用文件处理类
+ * @since 1
+ */
+require(DIR_LIB . DS . 'core-file.php');
+
+/**
+ * 引用备份插件
+ * @since 1
+ */
+require(DIR_LIB . DS . 'plug-backup.php');
+
+/**
  * 添加新的备份
  * @since 1
  */
+if (isset($_GET['backup']) == true || isset($_GET['auto']) == true) {
+    //进入维护模式，关闭平台
+    $oaconfig->save('WEB_ON', '0');
+    if ($_GET['backup'] == '1') {
+        if (plugbackup($db, $backup_dir, DIR_DATA) == true) {
+            $message = '备份成功！';
+            $message_bool = true;
+        }
+    }
+    if (!$message) {
+        $message = '无法生成备份文件，请确保您有足够的操作权限！';
+        $message_bool = false;
+    }
+    if ($message_bool == true && isset($_GET['auto']) == true) {
+        $message = '系统自动' . $message;
+    }
+    //开启平台
+    $oaconfig->save('WEB_ON', '1');
+}
+
+/**
+ * 下载备份文件
+ * @since 1
+ */
+if (isset($_GET['down']) == true) {
+    $backup_filename = $backup_dir . DS . (int) substr($_GET['down'], 0, -4) . '.zip';
+    //plugtourl($backup_filename);
+}
 
 /**
  * 恢复备份
  * @since 1
  */
+if (isset($_GET['return']) == true) {
+    $backup_filename = $backup_dir . DS . (int) substr($_GET['return'], 0, -4) . '.zip';
+    //进入维护模式，关闭平台
+    $oaconfig->save('WEB_ON', '0');
+    if (plugbackup_return($db, $backup_filename, $backup_dir . DS . 'return', DIR_DATA) == true) {
+        $message = '系统还原成功！';
+        $message_bool = true;
+    } else {
+        $message = '无法还原系统，可能是该备份文件损坏了！';
+        $message_bool = false;
+    }
+    //开启平台
+    $oaconfig->save('WEB_ON', '1');
+}
 
 /**
  * 删除备份
  * @since 1
  */
-
-
-/**
- * 获取消息列表记录数
- * @since 1
- */
-$table_list_row = $oapost->view_list_row(null, null, null, $post_status, $post_type);
-
-/**
- * 计算页码
- * @since 1
- */
-$page_max = ceil($table_list_row / $max);
-if ($page < 1) {
-    $page = 1;
-} else {
-    if ($page > $page_max) {
-        $page = $page_max;
+if (isset($_GET['del']) == true) {
+    $backup_filename = $backup_dir . DS . (int) substr($_GET['del'], 0, -4) . '.zip';
+    if (corefile::is_file($backup_filename) == true) {
+        if (corefile::delete_file($backup_filename) == true) {
+            $message = '删除成功！';
+            $message_bool = true;
+        }
+    }
+    if(!$message){
+        $message = '无法删除该备份文件！';
+        $message_bool = false;
     }
 }
-$page_prev = $page - 1;
-$page_next = $page + 1;
 
 /**
- * 获取消息列表
+ * 获取备份文件列表
  * @since 1
  */
-$table_list = $oapost->view_list(null, null, null, $post_status, $post_type, $page, $max, $sort, $desc);
+$table_list = corefile::list_dir($backup_dir, '*.zip');
 
 /**
  * 获取上一次自动备份时间
@@ -95,26 +144,16 @@ $table_list = $oapost->view_list(null, null, null, $post_status, $post_type, $pa
     </thead>
     <tbody id="message_list">
         <?php if ($table_list) {
-            foreach ($table_list as $v) { ?>
+            foreach ($table_list as $v) { $v_stat = stat($v); ?>
                 <tr>
-                    <td><?php echo $v['post_name']; ?></td>
-                    <td><?php echo $v['post_date']; ?></td>
-                    <td><?php if($v['post_url'] > 0){ echo $v['post_url']/1024; }else{ echo '0'; } ?></td>
-                    <td><div class="btn-group"><a href="<?php echo $page_url.'&return='.$v['id']; ?>" class="btn btn-warning"><i class="icon-retweet icon-white"></i> 还原</a><a href="<?php echo $page_url.'&del='.$v['id']; ?>" class="btn btn-danger"><i class="icon-trash icon-white"></i> 删除</a></div></td>
+                    <td><?php echo basename($v); ?></td>
+                    <td><?php echo date('Y-m-d H:i:s',$v_stat['ctime']); ?></td>
+                    <td><?php echo floor($v_stat['size']/1024); ?></td>
+                    <td><div class="btn-group"><a href="<?php echo $v; //echo $page_url.'&down='.basename($v); ?>" class="btn"><i class="icon-file"></i> 下载</a><a href="<?php echo $page_url.'&return='.basename($v); ?>" class="btn btn-warning"><i class="icon-retweet icon-white"></i> 还原</a><a href="<?php echo $page_url.'&del='.basename($v); ?>" class="btn btn-danger"><i class="icon-trash icon-white"></i> 删除</a></div></td>
                 </tr>
         <?php } } ?>
     </tbody>
 </table>
-
-<!-- 页码 -->
-<ul class="pager">
-    <li class="previous<?php if ($page <= 1) { echo ' disabled'; } ?>">
-        <a href="<?php echo $page_url . '&page=' . $page_prev; ?>">&larr; 上一页</a>
-    </li>
-    <li class="next<?php if ($page >= $page_max) { echo ' disabled'; } ?>">
-        <a href="<?php echo $page_url.'&page='.$page_next; ?>">下一页 &rarr;</a>
-    </li>
-</ul>
 
 <!-- Javascript -->
 <script>
