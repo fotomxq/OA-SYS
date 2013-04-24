@@ -4,13 +4,13 @@
  * 备份和恢复模块
  * <p>需要：core-file、core-db支持</p>
  * @author fotomxq <fotomxq.me>
- * @version 1
+ * @version 2
  * @package plugbackup
  */
 
 /**
  * 生成新的备份文件
- * @since 1
+ * @since 2
  * @param coredb $db 数据库操作句柄
  * @param string $backup_dir 备份到目录
  * @param string $content_dir 文件数据目录
@@ -35,9 +35,6 @@ function plugbackup(&$db, $backup_dir, $content_dir) {
         }
         if ($bool == true) {
             $bool = corefile::copy_dir($content_dir . DS . 'logs', $ls_dir . DS . 'content' . DS . 'logs');
-        }
-        if ($bool == true) {
-            $bool = corefile::copy_dir($content_dir . DS . 'configs', $ls_dir . DS . 'content' . DS . 'configs');
         }
         //依次遍历所有数据并拷贝到文件内
         foreach ($db->tables as $k => $v) {
@@ -80,7 +77,18 @@ function plugbackup(&$db, $backup_dir, $content_dir) {
                     if ($res) {
                         $file_content = 'INSERT INTO `' . $v . '`(`' . implode('`,`', array_keys($res[0])) . '`) VALUES';
                         foreach ($res as $v_res) {
-                            $file_content .= '(\'' . implode('\',\'', $v_res) . '\'),';
+                            $file_content .= '(';
+                            foreach ($v_res as $v_res_v) {
+                                if ($v_res_v == null) {
+                                    $file_content .= 'NULL,';
+                                } elseif (is_int($v_res_v) == true) {
+                                    $file_content .= $v_res_v . ',';
+                                } else {
+                                    $file_content .= '\'' . $v_res_v . '\',';
+                                }
+                            }
+                            $file_content = substr($file_content, 0, -1);
+                            $file_content .= '),';
                         }
                         $file_content = substr($file_content, 0, -1) . ';';
                         $file_table_row = $v_table_dir . DS . $v . '_' . $p . '.sql';
@@ -120,7 +128,7 @@ function plugbackup(&$db, $backup_dir, $content_dir) {
 
 /**
  * 还原备份
- * @since 1
+ * @since 2
  * @param coredb $db
  * @param string $backup_file 备份的文件路径
  * @return boolean
@@ -154,16 +162,9 @@ function plugbackup_return(&$db, $backup_file, $return_dir, $content_dir) {
     }
     //检查数据是否正确
     if ($return == true) {
-        $v_dirs = array($ls_dir . DS . 'content', $ls_dir . DS . 'sql', $ls_dir . DS . 'content' . DS . 'configs', $ls_dir . DS . 'content' . DS . 'files', $ls_dir . DS . 'content' . DS . 'logs');
-        $v_files = array($v_dirs[2] . DS . 'db.inc.php', $v_dirs[2] . DS . 'index.php', $v_dirs[2] . DS . 'font.ttf', $v_dirs[2] . DS . 'qqwry.dat');
+        $v_dirs = array($ls_dir . DS . 'content', $ls_dir . DS . 'sql', $ls_dir . DS . 'content' . DS . 'files', $ls_dir . DS . 'content' . DS . 'logs');
         foreach ($v_dirs as $v) {
             if (corefile::is_dir($v) == false) {
-                $return = false;
-                break;
-            }
-        }
-        foreach ($v_files as $v) {
-            if (corefile::is_file($v) == false) {
                 $return = false;
                 break;
             }
@@ -177,7 +178,7 @@ function plugbackup_return(&$db, $backup_file, $return_dir, $content_dir) {
     }
     //删除现有数据
     if ($return == true) {
-        if (corefile::delete_dir($content_dir . DS . 'files') == true && corefile::delete_dir($content_dir . DS . 'logs') == true && corefile::delete_dir($content_dir . DS . 'configs') == true) {
+        if (corefile::delete_dir($content_dir . DS . 'files') == true && corefile::delete_dir($content_dir . DS . 'logs') == true) {
             $return = true;
         } else {
             $return = false;
@@ -185,7 +186,7 @@ function plugbackup_return(&$db, $backup_file, $return_dir, $content_dir) {
     }
     //拷贝备份数据
     if ($return == true) {
-        if (corefile::copy_dir($ls_dir . DS . 'content' . DS . 'configs', $content_dir . DS . 'configs') == true && corefile::copy_dir($ls_dir . DS . 'content' . DS . 'files', $content_dir . DS . 'files') == true && corefile::copy_dir($ls_dir . DS . 'content' . DS . 'logs', $content_dir . DS . 'logs') == true) {
+        if (corefile::copy_dir($ls_dir . DS . 'content' . DS . 'files', $content_dir . DS . 'files') == true && corefile::copy_dir($ls_dir . DS . 'content' . DS . 'logs', $content_dir . DS . 'logs') == true) {
             $return = true;
         } else {
             $return = false;

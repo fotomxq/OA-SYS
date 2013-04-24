@@ -2,7 +2,7 @@
 /**
  * 个人首页
  * @author fotomxq <fotomxq.me>
- * @version 2
+ * @version 3
  * @package oa
  */
 if (isset($init_page) == false) {
@@ -24,10 +24,13 @@ $message_list = $oapost->view_list(null, null, null, 'private', 'message', 1, 6,
 
 /**
  * 获取系统消息
- * @since 1
+ * @since 3
  */
 $system_message_list = $oapost->view_list(null, null, null, 'public', 'message', 1, 1, 0, true, null, null);
-$system_message_view = $oapost->view($system_message_list[0]['id']);
+$system_message_view = null;
+if ($system_message_list) {
+    $system_message_view = $oapost->view($system_message_list[0]['id']);
+}
 unset($system_message_list);
 
 /**
