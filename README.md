@@ -1,53 +1,28 @@
 OA-SYS
 ======
-
 <p>OA办公系统开源项目</p>
-<p>这是一套主要用于演示、学习为目的OA办公自动化系统。该系统具备基本的办公功能。</p>
+<p>这是一套主要用于演示、学习为目的OA办公自动化系统。该系统具备基本的自动化办公功能。</p>
 <p>在使用前请确保您已阅读本系统协议部分内容。</p>
 
-施工进度（v-完成 ; x-下一步）
+
+项目进度
 ======
-v 核心处理类、模块构建
+v 完成所有功能
 
-v 数据库设计
+x 测试和解决遗漏问题
 
-v 登录和主界面设计
 
-v 登录和登录状态验证
-
-v 用户类和用户管理界面
-
-v 用户组类和用户组管理界面
-
-v Post类
-
-v 系统配置界面
-
-v 修改个人信息界面
-
-v 消息中心界面
-
-v 通讯录界面
-
-v 个人消息中心界面
-
-v 公共留言薄界面
-
-v 文件上传、操作类
-
-v 网络硬盘个人中心界面
-
-v 文件共享中心界面
-
-v 工作日记界面
-
-v 生产任务中心界面
-
-v 计划任务界面
-
-v 业绩考评界面
-
-v 备份和恢复类、界面
+主要功能列表
+======
+* 用户和用户组、权限管理
+* 个人网盘和共享文件
+* 生产计划任务和业绩考评
+* 通讯录和短消息
+* 公告系统
+* 工作日记本
+* 全自动IP记录和黑名单
+* 备份和恢复功能、自动备份功能
+* 列表快速打印功能
 
 
 安装和使用
@@ -62,12 +37,12 @@ v 备份和恢复类、界面
 
 协议
 ======
-<p>本项目使用并遵守MIT许可证协议。</p>
+<p>本项目使用并遵守MIT许可协议。</p>
 <p>Copyright (C) 2013 liuzilu</p>
 <p>Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:</p>
 <p>The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.</p>
 <p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
-<p>本平台引用并使用了Bootstrap和Jquery相关类库。</p>
+<p>本项目引用并使用了Bootstrap界面库和Jquery相关库内容。</p>
 <p>Bootstrap声明引用</p>
 <p>Designed and built with all the love in the world by <a href="http://twitter.com/mdo" target="_blank">@mdo</a> and <a href="http://twitter.com/fat" target="_blank">@fat</a>.</p>
 <p>Code licensed under <a href="http://www.apache.org/licenses/LICENSE-2.0" target="_blank">Apache License v2.0</a>, documentation under <a href="http://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>.</p>
