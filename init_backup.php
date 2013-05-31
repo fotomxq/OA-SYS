@@ -2,7 +2,7 @@
 /**
  * 备份和恢复中心
  * @author fotomxq <fotomxq.me>
- * @version 1
+ * @version 2
  * @package oa
  */
 /**
@@ -49,15 +49,17 @@ require(DIR_LIB . DS . 'plug-backup.php');
 
 /**
  * 添加新的备份
- * @since 1
+ * @since 2
  */
 if (isset($_GET['backup']) == true || isset($_GET['auto']) == true) {
     //进入维护模式，关闭平台
     $oaconfig->save('WEB_ON', '0');
-    if ($_GET['backup'] == '1') {
-        if (plugbackup($db, $backup_dir, DIR_DATA) == true) {
-            $message = '备份成功！';
-            $message_bool = true;
+    if (isset($_GET['backup']) == true) {
+        if ($_GET['backup'] == '1') {
+            if (plugbackup($db, $backup_dir, DIR_DATA) == true) {
+                $message = '备份成功！';
+                $message_bool = true;
+            }
         }
     }
     if (!$message) {
