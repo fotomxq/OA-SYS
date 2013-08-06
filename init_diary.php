@@ -212,7 +212,7 @@ $table_list = $oapost->view_list($post_user, null, null, $post_status, $post_typ
     <div class="control-group">
         <label class="control-label" for="edit_content">日记内容</label>
         <div class="controls">
-            <textarea name="add_content" class="input-xxlarge" rows="10" placeholder="日记内容..."><?php echo $view_res['post_content']; ?></textarea>
+            <textarea name="edit_content" class="input-xxlarge" rows="10" placeholder="日记内容..."><?php echo $view_res['post_content']; ?></textarea>
         </div>
     </div>
     <div class="control-group">
