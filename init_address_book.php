@@ -32,17 +32,21 @@ $message_bool = false;
 if (isset($_POST['edit_id']) == false && isset($_POST['new_title']) == true) {
     $post_name = null;
     if (isset($_POST['new_name']) == true) {
-        $post_user_view = $oauser->view_user_name($_POST['new_name']);
-        if ($post_user_view) {
-            if ($post_user_view['id'] != $post_user) {
-                $post_name = $post_user_view['id'];
+        if ($_POST['new_name'] == '') {
+            $post_name = '';
+        } else {
+            $post_user_view = $oauser->view_user_name($_POST['new_name']);
+            if ($post_user_view) {
+                if ($post_user_view['id'] != $post_user) {
+                    $post_name = $post_user_view['id'];
+                } else {
+                    $message = '不能添加当前用户自身！';
+                    $message_bool = false;
+                }
             } else {
-                $message = '不能添加当前用户自身！';
+                $message = '该用户不存在！';
                 $message_bool = false;
             }
-        } else {
-            $message = '该用户不存在！';
-            $message_bool = false;
         }
     }
     if (!$message) {
@@ -86,17 +90,21 @@ if (isset($_POST['edit_id']) == true && isset($_POST['edit_title']) == true) {
     }
     $post_name = null;
     if (isset($_POST['edit_name']) == true) {
-        $post_user_view = $oauser->view_user_name($_POST['edit_name']);
-        if ($post_user_view) {
-            if ($post_user_view['id'] != $post_user) {
-                $post_name = $post_user_view['id'];
+        if ($_POST['edit_name'] == '') {
+            $post_name = '';
+        } else {
+            $post_user_view = $oauser->view_user_name($_POST['edit_name']);
+            if ($post_user_view) {
+                if ($post_user_view['id'] != $post_user) {
+                    $post_name = $post_user_view['id'];
+                } else {
+                    $message = '不能改为当前用户！';
+                    $message_bool = false;
+                }
             } else {
-                $message = '不能改为当前用户！';
+                $message = '该用户不存在！';
                 $message_bool = false;
             }
-        } else {
-            $message = '该用户不存在！';
-            $message_bool = false;
         }
     }
     if (!$message) {
@@ -118,7 +126,7 @@ if (isset($_GET['del']) == true) {
     $del_view = $oapost->view($_GET['del']);
     if ($del_view) {
         if ($del_view['post_user'] == $post_user) {
-            if ($oapost->del_parent($_GET['del'])) {
+            if ($oapost->del_parent($del_view['id'])) {
                 $message = '删除联系人成功！';
                 $message_bool = true;
             } else {
