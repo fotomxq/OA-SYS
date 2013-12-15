@@ -56,8 +56,8 @@ $group_list = $oauser->view_group_list(1, 999, 0, true);
             <th><i class="icon-tags"></i> 昵称</th>
             <th><i class="icon-envelope"></i> 邮箱</th>
             <th><i class="icon-th"></i> 用户组</th>
-            <th><i class="icon-time"></i> 最后登录时间</th>
-            <th><i class="icon-globe"></i> 最后登录IP</th>
+            <th><i class="icon-time"></i> 登录时间</th>
+            <th><i class="icon-globe"></i> 登录IP</th>
             <th><i class="icon-asterisk"></i> 操作</th>
         </tr>
     </thead>
@@ -82,9 +82,9 @@ $group_list = $oauser->view_group_list(1, 999, 0, true);
         <tr class="info">
             <td></td>
             <td><div class="input-prepend"><span class="add-on"><i class="icon-user"></i></span><input type="text" class="input-small" id="add_username" placeholder="用户名"></div></td>
-            <td><div class="input-prepend"><span class="add-on"><i class="icon-star"></i></span><input type="password"class="input-small" id="add_password" placeholder="密码"></div></td>
-            <td><div class="input-prepend"><span class="add-on"><i class="icon-envelope"></i></span><input type="text" id="add_email" placeholder="@邮箱.com"></div></td>
-            <td><div class="input-prepend"><span class="add-on"><i class="icon-th"></i></span><select id="add_group"><?php if($group_list){ foreach($group_list as $v){ ?><option value="<?php echo $v['id']; ?>"><?php echo $v['group_name']; ?></option><?php } } ?></select></div></td>
+            <td><div class="input-prepend"><span class="add-on"><i class="icon-star"></i></span><input type="password" class="input-small" id="add_password" placeholder="密码"></div></td>
+            <td><div class="input-prepend"><span class="add-on"><i class="icon-envelope"></i></span><input type="text" class="input-small" id="add_email" placeholder="@邮箱.com"></div></td>
+            <td><div class="input-prepend"><span class="add-on"><i class="icon-th"></i></span><select class="input-small" id="add_group"><?php if($group_list){ foreach($group_list as $v){ ?><option value="<?php echo $v['id']; ?>"><?php echo $v['group_name']; ?></option><?php } } ?></select></div></td>
             <td><div class="input-prepend"><span class="add-on">@</span><input type="text" id="add_name" class="input-small" placeholder="昵称"></div></td>
             <td><?php  echo $ip_arr['addr']; ?></td>
             <td><button href="#add" type="submit" class="btn btn-success" type="button"><i class="icon-plus icon-white"></i> 添加</button></td>
