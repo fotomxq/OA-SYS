@@ -523,7 +523,7 @@ class oauser {
         $session = $this->get_session_id();
         $sth = $this->db->prepare($sql);
         $sth->bindParam(':id', $id);
-        $sth->bindParam(':ip', $login_ip, PDO::PARAM_INT);
+        $sth->bindParam(':ip', $ip, PDO::PARAM_INT);
         $sth->bindParam(':session', $session, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
         $sth->bindParam(':status', $status, PDO::PARAM_INT);
         $sth->bindParam(':remember', $remember, PDO::PARAM_INT);
